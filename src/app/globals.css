@@ -2,14 +2,14 @@
 
 @theme {
   /* Backgrounds */
-  --color-bg-primary: #000000;
-  --color-bg-card: #161618;
-  --color-bg-card-deep: #0A0A0B;
+  --color-bg-primary: #fdf6e3;
+  --color-bg-card: #ffffff;
+  --color-bg-card-deep: #eee8d5;
 
   /* Text */
-  --color-text-primary: #F3F4F6;
-  --color-text-secondary: #93a1a1;
-  --color-text-tertiary: #657b83;
+  --color-text-primary: #073642;
+  --color-text-secondary: #586e75;
+  --color-text-tertiary: #93a1a1;
 
   /* Brand */
   --color-brand-primary: #2aa198;
@@ -26,25 +26,25 @@
 }
 
 :root {
-  /* Glass & borders (need rgba, not in @theme) */
-  --bg-glass: rgba(22, 22, 24, 0.8);
-  --border-subtle: rgba(147, 161, 161, 0.1);
-  --border-hover: rgba(147, 161, 161, 0.2);
+  /* Glass & borders */
+  --bg-glass: rgba(253, 246, 227, 0.85);
+  --border-subtle: rgba(7, 54, 66, 0.08);
+  --border-hover: rgba(7, 54, 66, 0.15);
   --border-active: rgba(42, 161, 152, 0.4);
 
-  /* Solarized derived colors for interactive states */
+  /* Interactive states */
   --color-primary-hover: #35b5ab;
   --color-accent-hover: #e0459a;
-  --color-btn-text: #002b36;  /* Solarized base03 — dark text on colored buttons */
+  --color-btn-text: #fdf6e3;
 
   /* Glow shadows */
-  --shadow-primary: 0 4px 20px rgba(42, 161, 152, 0.3);
-  --shadow-accent: 0 4px 20px rgba(211, 54, 130, 0.3);
+  --shadow-primary: 0 4px 20px rgba(42, 161, 152, 0.2);
+  --shadow-accent: 0 4px 20px rgba(211, 54, 130, 0.2);
 }
 
 html {
-  color-scheme: dark;
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 body {

@@ -38,7 +38,7 @@ export default function RotatingKeyword() {
           exit={{ y: "-100%", opacity: 0, filter: "blur(4px)" }}
           transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="absolute inset-0 flex items-center justify-center text-brand-accent"
-          style={{ textShadow: "0 0 40px rgba(211,54,130,0.4)" }}
+          style={{ textShadow: "0 0 30px rgba(211,54,130,0.25)" }}
         >
           {words[index]}
         </motion.span>

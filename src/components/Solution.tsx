@@ -72,7 +72,7 @@ const products = [
 
 export default function Solution() {
   return (
-    <section className="px-6 py-20 lg:py-32">
+    <section id="solution" className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div
@@ -116,7 +116,7 @@ export default function Solution() {
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "var(--border-active)";
                 e.currentTarget.style.boxShadow =
-                  "0 0 30px rgba(42,161,152,0.08)";
+                  "0 4px 24px rgba(42,161,152,0.12)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "var(--border-subtle)";

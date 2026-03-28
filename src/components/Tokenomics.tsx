@@ -70,7 +70,7 @@ const utilities = [
 
 export default function Tokenomics() {
   return (
-    <section className="px-6 py-20 lg:py-32">
+    <section id="tokenomics" className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div

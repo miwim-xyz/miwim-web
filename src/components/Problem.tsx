@@ -37,7 +37,7 @@ const fadeUp = {
 
 export default function Problem() {
   return (
-    <section className="px-6 py-20 lg:py-32">
+    <section id="problem" className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div
@@ -81,7 +81,7 @@ export default function Problem() {
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "var(--border-active)";
                 e.currentTarget.style.boxShadow =
-                  "0 0 30px rgba(42,161,152,0.08)";
+                  "0 4px 24px rgba(42,161,152,0.12)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "var(--border-subtle)";

@@ -16,7 +16,7 @@ const MOUSE_RADIUS = 220;
 const MOUSE_FORCE = 0.5;
 const PRIMARY = "42, 161, 152"; // #2aa198 RGB
 const ACCENT = "211, 54, 130"; // #d33682 RGB
-const EDGE_COLOR = "101, 123, 131"; // text-tertiary RGB
+const EDGE_COLOR = "147, 161, 161"; // text-tertiary RGB (light theme)
 
 export default function NetworkCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -146,7 +146,7 @@ export default function NetworkCanvas() {
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECT_DIST) {
-            const opacity = (1 - dist / CONNECT_DIST) * 0.25;
+            const opacity = (1 - dist / CONNECT_DIST) * 0.18;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -160,7 +160,7 @@ export default function NetworkCanvas() {
       // Draw nodes with glow
       for (const node of nodes) {
         const color = node.isSpecial ? ACCENT : PRIMARY;
-        const alpha = node.isSpecial ? 0.8 : 0.6;
+        const alpha = node.isSpecial ? 0.65 : 0.45;
 
         // Glow
         if (node.radius > 4) {
