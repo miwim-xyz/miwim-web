@@ -3,13 +3,27 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 24 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const scaleUp = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
 };
 
 const stats = [
@@ -19,7 +33,7 @@ const stats = [
   { value: 1, prefix: "$", suffix: "B+", label: "Grass valuation (DePIN comparable)" },
 ];
 
-function useCountUp(end: number, duration = 1500) {
+function useCountUp(end: number, duration = 1200) {
   const [count, setCount] = useState(0);
   const [started, setStarted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +57,7 @@ function useCountUp(end: number, duration = 1500) {
     function tick(now: number) {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.round(end * eased));
       if (progress < 1) requestAnimationFrame(tick);
     }
@@ -65,8 +79,7 @@ function StatCard({
   return (
     <motion.div
       ref={ref}
-      variants={fadeUp}
-      custom={index + 2}
+      variants={scaleUp}
       className="rounded-2xl border p-6 text-center lg:p-8"
       style={{
         background: "var(--color-bg-card)",
@@ -93,25 +106,24 @@ function StatCard({
 
 export default function KeyNumbers() {
   return (
-    <section className="px-6 py-20 lg:py-40">
+    <section className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-          className="mb-16 text-center"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={stagger}
+          className="mb-14 text-center"
         >
           <motion.p
             variants={fadeUp}
-            custom={0}
             className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-primary"
           >
             Market Opportunity
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            custom={1}
             className="text-3xl font-bold tracking-tight lg:text-[40px] lg:leading-[1.2]"
           >
             Building at the intersection of three massive markets
@@ -122,7 +134,8 @@ export default function KeyNumbers() {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
+          viewport={{ once: true, amount: 0.2 }}
+          variants={stagger}
           className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6"
         >
           {stats.map((stat, i) => (

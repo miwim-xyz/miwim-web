@@ -3,13 +3,36 @@
 import { motion } from "framer-motion";
 import { Zap, Fingerprint } from "lucide-react";
 
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 24 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const slideLeft = {
+  hidden: { opacity: 0, x: -30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const slideRight = {
+  hidden: { opacity: 0, x: 30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
 };
 
 const products = [
@@ -27,6 +50,7 @@ const products = [
       "Auto-failover in <1 second",
       "Fast mode or private (multi-hop) mode",
     ],
+    variant: slideLeft,
   },
   {
     badge: "For business",
@@ -42,30 +66,30 @@ const products = [
       "IP pool rotation or dedicated binding",
       "Per-GB pricing starting at $1/GB",
     ],
+    variant: slideRight,
   },
 ];
 
 export default function Solution() {
   return (
-    <section className="px-6 py-20 lg:py-40">
+    <section className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-          className="mb-16 text-center"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={stagger}
+          className="mb-14 text-center"
         >
           <motion.p
             variants={fadeUp}
-            custom={0}
             className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-primary"
           >
             The Solution
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            custom={1}
             className="text-3xl font-bold tracking-tight lg:text-[40px] lg:leading-[1.2]"
           >
             Two products, one decentralized network
@@ -73,16 +97,18 @@ export default function Solution() {
         </motion.div>
 
         {/* Product cards */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          {products.map((product, i) => (
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={stagger}
+          className="grid gap-6 lg:grid-cols-2"
+        >
+          {products.map((product) => (
             <motion.div
               key={product.title}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.15 }}
-              custom={i + 2}
-              variants={fadeUp}
-              className="group rounded-2xl border p-8 transition-all duration-300 hover:-translate-y-0.5 lg:p-10"
+              variants={product.variant}
+              className="group rounded-2xl border p-8 transition-all duration-300 hover:-translate-y-1 lg:p-10"
               style={{
                 background: "var(--color-bg-card)",
                 borderColor: "var(--border-subtle)",
@@ -138,14 +164,14 @@ export default function Solution() {
               </ul>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Bottom note */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
           className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-text-tertiary"
         >
           Both product lines share the same decentralized supply network, the

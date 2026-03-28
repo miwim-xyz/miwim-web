@@ -2,13 +2,27 @@
 
 import { motion } from "framer-motion";
 
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+};
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 24 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.15, duration: 0.5, ease: "easeOut" },
-  }),
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
 };
 
 const supplyItems = [
@@ -33,25 +47,24 @@ const demandItems = [
 
 export default function HowItWorks() {
   return (
-    <section className="px-6 py-20 lg:py-40">
+    <section className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-          className="mb-16 text-center"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={stagger}
+          className="mb-14 text-center"
         >
           <motion.p
             variants={fadeUp}
-            custom={0}
             className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-primary"
           >
             How It Works
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            custom={1}
             className="text-3xl font-bold tracking-tight lg:text-[40px] lg:leading-[1.2]"
           >
             A three-sided marketplace for bandwidth
@@ -63,10 +76,11 @@ export default function HowItWorks() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
+          variants={stagger}
           className="flex flex-col items-center gap-8"
         >
           {/* SUPPLY SIDE */}
-          <motion.div variants={fadeUp} custom={2} className="w-full">
+          <motion.div variants={fadeUp} className="w-full">
             <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-brand-secondary">
               Supply Side
             </p>
@@ -88,8 +102,7 @@ export default function HowItWorks() {
 
           {/* Arrow down */}
           <motion.div
-            variants={fadeUp}
-            custom={3}
+            variants={scaleIn}
             className="flex flex-col items-center gap-1"
           >
             <div className="h-8 w-px bg-text-tertiary/30" />
@@ -99,7 +112,7 @@ export default function HowItWorks() {
           </motion.div>
 
           {/* PLATFORM */}
-          <motion.div variants={fadeUp} custom={4} className="w-full">
+          <motion.div variants={scaleIn} className="w-full">
             <div
               className="rounded-2xl border p-6 text-center lg:p-8"
               style={{
@@ -130,8 +143,7 @@ export default function HowItWorks() {
 
           {/* Arrow down */}
           <motion.div
-            variants={fadeUp}
-            custom={5}
+            variants={scaleIn}
             className="flex flex-col items-center gap-1"
           >
             <div className="h-8 w-px bg-text-tertiary/30" />
@@ -141,7 +153,7 @@ export default function HowItWorks() {
           </motion.div>
 
           {/* DEMAND SIDE */}
-          <motion.div variants={fadeUp} custom={6} className="w-full">
+          <motion.div variants={fadeUp} className="w-full">
             <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-brand-success">
               Demand Side
             </p>

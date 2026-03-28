@@ -2,13 +2,18 @@
 
 import { motion } from "framer-motion";
 
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 24 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
 };
 
 const phases = [
@@ -56,25 +61,24 @@ const phases = [
 
 export default function Roadmap() {
   return (
-    <section className="px-6 py-20 lg:py-40">
+    <section className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-          className="mb-16 text-center"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={stagger}
+          className="mb-14 text-center"
         >
           <motion.p
             variants={fadeUp}
-            custom={0}
             className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-primary"
           >
             Roadmap
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            custom={1}
             className="text-3xl font-bold tracking-tight lg:text-[40px] lg:leading-[1.2]"
           >
             From MVP to global network
@@ -86,17 +90,17 @@ export default function Roadmap() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
+          variants={stagger}
           className="relative"
         >
           {/* Horizontal line (desktop) */}
           <div className="absolute left-0 right-0 top-[28px] hidden h-px bg-text-tertiary/20 lg:block" />
 
           <div className="grid gap-6 lg:grid-cols-4">
-            {phases.map((phase, i) => (
+            {phases.map((phase) => (
               <motion.div
                 key={phase.quarter}
                 variants={fadeUp}
-                custom={i + 2}
                 className="relative"
               >
                 {/* Dot */}

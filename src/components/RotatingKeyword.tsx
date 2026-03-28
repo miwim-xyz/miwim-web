@@ -22,16 +22,23 @@ export default function RotatingKeyword() {
   }, []);
 
   return (
-    <span className="relative inline-block overflow-hidden align-bottom" style={{ minWidth: "5ch" }}>
+    <span
+      className="relative inline-flex justify-center overflow-hidden align-baseline"
+      style={{
+        width: "8.5em",
+        height: "1.1em",
+        verticalAlign: "baseline",
+      }}
+    >
       <AnimatePresence mode="wait">
         <motion.span
           key={words[index]}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -20, opacity: 0 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="inline-block text-brand-accent"
-          style={{ textShadow: "0 0 40px rgba(211,54,130,0.3)" }}
+          initial={{ y: "100%", opacity: 0, filter: "blur(4px)" }}
+          animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
+          exit={{ y: "-100%", opacity: 0, filter: "blur(4px)" }}
+          transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="absolute inset-0 flex items-center justify-center text-brand-accent"
+          style={{ textShadow: "0 0 40px rgba(211,54,130,0.4)" }}
         >
           {words[index]}
         </motion.span>

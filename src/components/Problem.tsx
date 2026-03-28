@@ -21,36 +21,40 @@ const cards = [
   },
 ];
 
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 24 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
 };
 
 export default function Problem() {
   return (
-    <section className="px-6 py-20 lg:py-40">
+    <section className="px-6 py-20 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         {/* Section header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-          className="mb-16 text-center"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={stagger}
+          className="mb-14 text-center"
         >
           <motion.p
             variants={fadeUp}
-            custom={0}
             className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-primary"
           >
             The Problem
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            custom={1}
             className="text-3xl font-bold tracking-tight lg:text-[40px] lg:leading-[1.2]"
           >
             The centralized proxy market is fundamentally broken
@@ -58,16 +62,18 @@ export default function Problem() {
         </motion.div>
 
         {/* Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card, i) => (
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={stagger}
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
+          {cards.map((card) => (
             <motion.div
               key={card.title}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.15 }}
-              custom={i + 2}
               variants={fadeUp}
-              className="group rounded-2xl border p-8 transition-all duration-300 hover:-translate-y-0.5"
+              className="group rounded-2xl border p-8 transition-all duration-300 hover:-translate-y-1"
               style={{
                 background: "var(--color-bg-card)",
                 borderColor: "var(--border-subtle)",
@@ -87,7 +93,7 @@ export default function Problem() {
               <p className="leading-relaxed text-text-secondary">{card.body}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

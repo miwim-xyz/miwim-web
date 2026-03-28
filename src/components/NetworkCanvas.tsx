@@ -11,11 +11,11 @@ interface Node {
   isSpecial: boolean;
 }
 
-const CONNECT_DIST = 150;
-const MOUSE_RADIUS = 200;
-const MOUSE_FORCE = 0.3;
-const PRIMARY = "#2aa198";
-const ACCENT = "#d33682";
+const CONNECT_DIST = 160;
+const MOUSE_RADIUS = 220;
+const MOUSE_FORCE = 0.5;
+const PRIMARY = "42, 161, 152"; // #2aa198 RGB
+const ACCENT = "211, 54, 130"; // #d33682 RGB
 const EDGE_COLOR = "101, 123, 131"; // text-tertiary RGB
 
 export default function NetworkCanvas() {
@@ -33,11 +33,15 @@ export default function NetworkCanvas() {
     if (!ctx) return;
 
     const isMobile = window.innerWidth < 768;
-    const NODE_COUNT = isMobile ? 35 : 70;
+    const NODE_COUNT = isMobile ? 40 : 80;
 
     function resize() {
-      canvas!.width = window.innerWidth;
-      canvas!.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas!.width = window.innerWidth * dpr;
+      canvas!.height = window.innerHeight * dpr;
+      canvas!.style.width = window.innerWidth + "px";
+      canvas!.style.height = window.innerHeight + "px";
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resize();
     window.addEventListener("resize", resize);
@@ -46,29 +50,28 @@ export default function NetworkCanvas() {
     const nodes: Node[] = [];
     for (let i = 0; i < NODE_COUNT; i++) {
       nodes.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        radius: i < 4 ? 8 : 3 + Math.random() * 3,
-        isSpecial: i < 4,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        radius: i < 5 ? 6 + Math.random() * 3 : 2.5 + Math.random() * 2.5,
+        isSpecial: i < 5,
       });
     }
     nodesRef.current = nodes;
 
-    // Mouse tracking (desktop only)
+    // Mouse tracking
     if (!isMobile) {
       const onMove = (e: MouseEvent) => {
         mouseRef.current = { x: e.clientX, y: e.clientY };
       };
       const onClick = (e: MouseEvent) => {
-        // Repulsion burst on click
         for (const node of nodes) {
           const dx = node.x - e.clientX;
           const dy = node.y - e.clientY;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 250 && dist > 0) {
-            const force = (1 - dist / 250) * 8;
+          if (dist < 280 && dist > 0) {
+            const force = (1 - dist / 280) * 10;
             node.vx += (dx / dist) * force;
             node.vy += (dy / dist) * force;
           }
@@ -92,19 +95,22 @@ export default function NetworkCanvas() {
     );
     observer.observe(canvas);
 
+    const w = () => window.innerWidth;
+    const h = () => window.innerHeight;
+
     function animate() {
       animRef.current = requestAnimationFrame(animate);
-      if (!visibleRef.current || !ctx || !canvas) return;
+      if (!visibleRef.current || !ctx) return;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, w(), h());
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
 
       // Update nodes
       for (const node of nodes) {
         // Brownian motion
-        node.vx += (Math.random() - 0.5) * 0.02;
-        node.vy += (Math.random() - 0.5) * 0.02;
+        node.vx += (Math.random() - 0.5) * 0.03;
+        node.vy += (Math.random() - 0.5) * 0.03;
 
         // Mouse gravity (desktop)
         if (!isMobile) {
@@ -113,24 +119,24 @@ export default function NetworkCanvas() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < MOUSE_RADIUS && dist > 0) {
             const force = (1 - dist / MOUSE_RADIUS) * MOUSE_FORCE;
-            node.vx += dx * force * 0.001;
-            node.vy += dy * force * 0.001;
+            node.vx += (dx / dist) * force * 0.15;
+            node.vy += (dy / dist) * force * 0.15;
           }
         }
 
         // Damping
-        node.vx *= 0.98;
-        node.vy *= 0.98;
+        node.vx *= 0.97;
+        node.vy *= 0.97;
 
         // Update position
         node.x += node.vx;
         node.y += node.vy;
 
         // Boundary wrapping
-        if (node.x < -20) node.x = canvas.width + 20;
-        if (node.x > canvas.width + 20) node.x = -20;
-        if (node.y < -20) node.y = canvas.height + 20;
-        if (node.y > canvas.height + 20) node.y = -20;
+        if (node.x < -20) node.x = w() + 20;
+        if (node.x > w() + 20) node.x = -20;
+        if (node.y < -20) node.y = h() + 20;
+        if (node.y > h() + 20) node.y = -20;
       }
 
       // Draw edges
@@ -140,24 +146,40 @@ export default function NetworkCanvas() {
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECT_DIST) {
-            const opacity = (1 - dist / CONNECT_DIST) * 0.15;
+            const opacity = (1 - dist / CONNECT_DIST) * 0.25;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
             ctx.strokeStyle = `rgba(${EDGE_COLOR}, ${opacity})`;
-            ctx.lineWidth = 0.5;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         }
       }
 
-      // Draw nodes
+      // Draw nodes with glow
       for (const node of nodes) {
+        const color = node.isSpecial ? ACCENT : PRIMARY;
+        const alpha = node.isSpecial ? 0.8 : 0.6;
+
+        // Glow
+        if (node.radius > 4) {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.radius * 3, 0, Math.PI * 2);
+          const grad = ctx.createRadialGradient(
+            node.x, node.y, 0,
+            node.x, node.y, node.radius * 3
+          );
+          grad.addColorStop(0, `rgba(${color}, 0.15)`);
+          grad.addColorStop(1, `rgba(${color}, 0)`);
+          ctx.fillStyle = grad;
+          ctx.fill();
+        }
+
+        // Core
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fillStyle = node.isSpecial
-          ? `rgba(211, 54, 130, 0.6)`
-          : `rgba(42, 161, 152, 0.4)`;
+        ctx.fillStyle = `rgba(${color}, ${alpha})`;
         ctx.fill();
       }
     }
@@ -175,7 +197,7 @@ export default function NetworkCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none absolute inset-0 z-0"
+      className="absolute inset-0 z-0"
       style={{ width: "100%", height: "100%" }}
     />
   );
