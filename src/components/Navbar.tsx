@@ -46,7 +46,7 @@ export default function Navbar() {
           </Link>
           <a
             href="#waitlist"
-            className="rounded-xl bg-brand-primary px-6 py-2.5 text-sm font-semibold text-[#002b36] transition-all hover:-translate-y-0.5 hover:bg-[#35b5ab] hover:shadow-[0_4px_20px_rgba(42,161,152,0.3)]"
+            className="btn-primary rounded-xl px-6 py-2.5 text-sm"
           >
             Join Waitlist →
           </a>

@@ -24,6 +24,7 @@ export default function NetworkCanvas() {
   const nodesRef = useRef<Node[]>([]);
   const animRef = useRef<number>(0);
   const visibleRef = useRef(true);
+  const cleanupMouseRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -76,8 +77,7 @@ export default function NetworkCanvas() {
       window.addEventListener("mousemove", onMove);
       window.addEventListener("click", onClick);
 
-      // Cleanup stored for later
-      (canvas as unknown as Record<string, () => void>)._cleanupMouse = () => {
+      cleanupMouseRef.current = () => {
         window.removeEventListener("mousemove", onMove);
         window.removeEventListener("click", onClick);
       };
@@ -168,8 +168,7 @@ export default function NetworkCanvas() {
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize", resize);
       observer.disconnect();
-      const cleanup = (canvas as unknown as Record<string, () => void>)._cleanupMouse;
-      if (cleanup) cleanup();
+      cleanupMouseRef.current?.();
     };
   }, []);
 

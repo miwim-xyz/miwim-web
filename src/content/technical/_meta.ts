@@ -1,4 +1,4 @@
-export default {
+const meta = {
   index: "Overview",
   "architecture-overview": "Architecture Overview",
   "node-roles": "Node Roles & Detection",
@@ -9,3 +9,4 @@ export default {
   "smart-routing": "Smart Routing",
   "api-reference": "API Reference",
 };
+export default meta;

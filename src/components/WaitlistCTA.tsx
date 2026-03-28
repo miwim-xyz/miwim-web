@@ -23,8 +23,9 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm text-text-tertiary">{label}</label>
+      <label htmlFor={name} className="mb-1.5 block text-sm text-text-tertiary">{label}</label>
       <select
+        id={name}
         name={name}
         className="w-full rounded-lg border bg-bg-card-deep px-3 py-2.5 text-sm text-text-primary outline-none transition-colors focus:border-brand-primary"
         style={{ borderColor: "var(--border-subtle)" }}
@@ -62,10 +63,11 @@ function UserWaitlistForm() {
       className="space-y-4"
     >
       <div>
-        <label className="mb-1.5 block text-sm text-text-tertiary">
+        <label htmlFor="user-email" className="mb-1.5 block text-sm text-text-tertiary">
           Email *
         </label>
         <input
+          id="user-email"
           type="email"
           required
           placeholder="you@example.com"
@@ -75,22 +77,22 @@ function UserWaitlistForm() {
       </div>
       <SelectField
         label="Country"
-        name="country"
+        name="user-country"
         options={["United States", "China", "India", "Germany", "Japan", "Other"]}
       />
       <SelectField
         label="Monthly VPN/proxy spend"
-        name="spend"
+        name="user-spend"
         options={["Free", "< $5", "$5–15", "$15–30", "$30+"]}
       />
       <SelectField
         label="Biggest pain point"
-        name="pain"
+        name="user-pain"
         options={["Speed", "Price", "Trust", "IP blocked", "Other"]}
       />
       <button
         type="submit"
-        className="w-full rounded-xl bg-brand-primary py-3 text-sm font-semibold text-[#002b36] transition-all hover:bg-[#35b5ab] hover:shadow-[0_4px_20px_rgba(42,161,152,0.3)]"
+        className="btn-primary w-full rounded-xl py-3 text-sm font-semibold"
       >
         Join Waitlist
       </button>
@@ -120,10 +122,11 @@ function ProviderForm() {
       className="space-y-4"
     >
       <div>
-        <label className="mb-1.5 block text-sm text-text-tertiary">
+        <label htmlFor="provider-email" className="mb-1.5 block text-sm text-text-tertiary">
           Email *
         </label>
         <input
+          id="provider-email"
           type="email"
           required
           placeholder="you@example.com"
@@ -132,10 +135,11 @@ function ProviderForm() {
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-sm text-text-tertiary">
+        <label htmlFor="provider-location" className="mb-1.5 block text-sm text-text-tertiary">
           Server location / Country
         </label>
         <input
+          id="provider-location"
           type="text"
           placeholder="e.g. US-East, Frankfurt, Tokyo"
           className="w-full rounded-lg border bg-bg-card-deep px-3 py-2.5 text-sm text-text-primary outline-none transition-colors focus:border-brand-primary"
@@ -144,17 +148,17 @@ function ProviderForm() {
       </div>
       <SelectField
         label="Node type"
-        name="nodeType"
+        name="provider-nodeType"
         options={["Datacenter VPS", "Home broadband", "Both"]}
       />
       <SelectField
         label="Approximate bandwidth"
-        name="bandwidth"
+        name="provider-bandwidth"
         options={["< 50 Mbps", "50–200 Mbps", "200+ Mbps", "Not sure"]}
       />
       <button
         type="submit"
-        className="w-full rounded-xl bg-brand-accent py-3 text-sm font-semibold text-white transition-all hover:bg-[#e0459a] hover:shadow-[0_4px_20px_rgba(211,54,130,0.3)]"
+        className="btn-accent w-full rounded-xl py-3 text-sm font-semibold"
       >
         Apply as Provider
       </button>

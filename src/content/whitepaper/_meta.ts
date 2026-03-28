@@ -1,4 +1,4 @@
-export default {
+const meta = {
   index: "Overview",
   introduction: "Introduction",
   problem: "Problem",
@@ -8,3 +8,4 @@ export default {
   roadmap: "Roadmap",
   team: "Team",
 };
+export default meta;

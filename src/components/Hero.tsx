@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import NetworkCanvas from "./NetworkCanvas";
 import RotatingKeyword from "./RotatingKeyword";
 
@@ -54,17 +55,16 @@ export default function Hero() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
           <a
             href="#waitlist"
-            className="rounded-xl bg-brand-primary px-9 py-4 text-base font-semibold text-[#002b36] transition-all hover:-translate-y-0.5 hover:bg-[#35b5ab] hover:shadow-[0_4px_20px_rgba(42,161,152,0.3)]"
+            className="btn-primary rounded-xl px-9 py-4 text-base"
           >
             Join Waitlist
           </a>
-          <a
+          <Link
             href="/docs/whitepaper"
-            className="rounded-xl border px-9 py-4 text-base font-medium text-text-primary transition-all hover:bg-bg-card"
-            style={{ borderColor: "var(--border-hover)" }}
+            className="btn-ghost rounded-xl px-9 py-4 text-base"
           >
             Read Whitepaper →
-          </a>
+          </Link>
         </div>
 
         {/* Stats row */}

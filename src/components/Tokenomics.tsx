@@ -182,7 +182,7 @@ export default function Tokenomics() {
         >
           <Link
             href="/docs/whitepaper/tokenomics"
-            className="text-sm font-medium text-brand-primary transition-colors hover:text-[#35b5ab]"
+            className="text-sm font-medium text-brand-primary transition-opacity hover:opacity-80"
           >
             Read full tokenomics →
           </Link>

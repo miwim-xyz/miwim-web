@@ -1,6 +1,18 @@
+import Link from "next/link";
 import { Github, MessageCircle, Send } from "lucide-react";
 
-const columns = [
+interface FooterLink {
+  label: string;
+  href: string;
+  internal?: boolean;
+}
+
+interface FooterColumn {
+  title: string;
+  links: FooterLink[];
+}
+
+const columns: FooterColumn[] = [
   {
     title: "Products",
     links: [
@@ -12,8 +24,8 @@ const columns = [
   {
     title: "Resources",
     links: [
-      { label: "Whitepaper", href: "/docs/whitepaper" },
-      { label: "Technical Docs", href: "/docs/technical" },
+      { label: "Whitepaper", href: "/docs/whitepaper", internal: true },
+      { label: "Technical Docs", href: "/docs/technical", internal: true },
       { label: "Blog (coming)", href: "#" },
       { label: "FAQ (coming)", href: "#" },
     ],
@@ -82,12 +94,21 @@ export default function Footer() {
                 <ul className="space-y-2">
                   {col.links.map((link) => (
                     <li key={link.label}>
-                      <a
-                        href={link.href}
-                        className="text-sm text-text-tertiary transition-colors hover:text-text-secondary"
-                      >
-                        {link.label}
-                      </a>
+                      {link.internal ? (
+                        <Link
+                          href={link.href}
+                          className="text-sm text-text-tertiary transition-colors hover:text-text-secondary"
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="text-sm text-text-tertiary transition-colors hover:text-text-secondary"
+                        >
+                          {link.label}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
