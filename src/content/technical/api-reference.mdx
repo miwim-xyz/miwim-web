@@ -1,0 +1,56 @@
+# API Reference
+
+> The Miwim white-label API is currently in development. Documentation will be published here when the API enters beta in **Q4 2026**.
+
+## Planned Endpoints
+
+### Subscription Management
+```
+POST /api/v1/subscribe          Create a new subscription
+GET  /api/v1/subscribe/{id}     Get subscription details
+PUT  /api/v1/subscribe/{id}     Update subscription plan
+DEL  /api/v1/subscribe/{id}     Cancel subscription
+```
+
+### Node Access
+```
+GET  /api/v1/nodes              List available nodes
+GET  /api/v1/nodes/{id}         Get node details and health
+GET  /api/v1/config/{token}     Get Singbox config for subscription
+```
+
+### Usage & Billing
+```
+GET  /api/v1/usage              Get bandwidth usage stats
+GET  /api/v1/usage/daily        Daily breakdown
+GET  /api/v1/billing            Billing history
+POST /api/v1/billing/topup      Add credit (fiat or token)
+```
+
+### IP Management (Edge)
+```
+GET  /api/v1/ips                List available IP pools
+POST /api/v1/ips/bind           Bind a dedicated residential IP
+DEL  /api/v1/ips/bind/{id}      Release a dedicated IP
+GET  /api/v1/ips/rotate         Get a fresh IP from pool
+```
+
+## Authentication
+
+All API requests require a Bearer token:
+
+```
+Authorization: Bearer {api_key}
+```
+
+API keys are issued to white-label clients based on their $MIWIM staking tier:
+
+| Tier | Staking Requirement | Rate Limit | Features |
+|------|-------------------|------------|----------|
+| Basic | 10,000 $MIWIM | 100 req/min | Backbone access |
+| Pro | 50,000 $MIWIM | 1,000 req/min | Backbone + Edge |
+| Enterprise | 200,000 $MIWIM | 10,000 req/min | Full access + dedicated pools |
+
+## Early Access
+
+Interested in white-label API access? [Join the waitlist](/#waitlist) or contact us on [Telegram](#).

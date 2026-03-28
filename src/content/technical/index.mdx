@@ -1,0 +1,28 @@
+# Technical Documentation
+
+Developer-facing documentation for the Miwim decentralized proxy infrastructure.
+
+## Overview
+
+Miwim's platform consists of the following core components:
+
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| Provider Agent | Go + Singbox core | Runs on provider machines, manages proxy service |
+| Backend API | Go (Fiber) | Node registry, routing, subscriptions |
+| Database | PostgreSQL | Users, nodes, subscriptions, logs |
+| Cache | Redis | Health scores, session management, rate limiting |
+| Monitoring | Prometheus + Grafana | Node health, network metrics |
+| Config Generator | Go | Dynamic Singbox config per user |
+| Smart Router | Go | Optimal node selection per request |
+
+## Sections
+
+- **[Architecture Overview](/docs/technical/architecture-overview)** — System diagram and component interactions
+- **[Node Roles](/docs/technical/node-roles)** — Auto-detection benchmark suite and role assignment
+- **[Residential Routing](/docs/technical/residential-routing)** — Reverse tunnel architecture for Edge
+- **[Privacy Model](/docs/technical/privacy-model)** — 5-layer defense against malicious nodes
+- **[Token Pricing](/docs/technical/token-pricing)** — Hybrid oracle and TWAP mechanism
+- **[Provider Agent](/docs/technical/provider-agent)** — Installation, configuration, and protocol
+- **[Smart Routing](/docs/technical/smart-routing)** — Algorithm, health scoring, and failover
+- **[API Reference](/docs/technical/api-reference)** — White-label API (coming Q4 2026)

@@ -1,0 +1,71 @@
+# The Solution — Miwim Network
+
+Miwim solves the trust, monopoly, and single-point-of-failure problems through a dual-track decentralized architecture where supply, routing, and economics are all distributed.
+
+## Dual-Track Architecture
+
+### Miwim Backbone — Decentralized VPN for Consumers
+
+Backbone serves everyday users who need fast, reliable proxy access for daily browsing, streaming, and communication.
+
+**How it works:**
+- A global network of datacenter relay nodes provides low-latency, high-bandwidth proxy access
+- Users connect via the Miwim Android app (iOS and desktop planned) with one-tap connectivity
+- Singbox protocol support ensures compatibility with existing tools and maximum censorship resistance
+- Auto-failover switches to backup nodes in under 1 second if the primary connection drops
+
+**Key specs:**
+- Latency: ~150ms (single-hop fast mode) / ~175ms (multi-hop private mode)
+- Protocols: Shadowsocks, VLESS, VMess via Singbox
+- Pricing: Monthly subscription starting at $8/month
+
+### Miwim Edge — Genuine Residential IPs for Business
+
+Edge serves B2B and professional users who need real home broadband IPs for use cases where datacenter IPs are detected and blocked.
+
+**How it works:**
+- Real home broadband providers contribute their idle bandwidth via a lightweight agent
+- The agent initiates outbound reverse tunnels to relay nodes — no port forwarding or router configuration needed
+- Users' traffic is routed through a forced multi-hop chain: User → Relay → Residential Exit → Target
+- Each hop can only see partial information, ensuring neither relay nor exit can correlate user identity with destination
+
+**Key specs:**
+- IP type: Genuine residential IPs from real homes (not datacenter IPs masked as residential)
+- Routing: Always multi-hop for maximum privacy and anti-detection
+- Options: IP pool rotation or dedicated binding for persistent sessions
+- Pricing: Per-GB starting at $1/GB
+
+### White-Label API — Infrastructure as a Service
+
+The third product line enables proxy resellers and businesses to build on Miwim's network without managing infrastructure.
+
+**How it works:**
+- RESTful API for programmatic access to both Backbone and Edge networks
+- Tiered access based on $MIWIM staking level
+- Custom configuration, dedicated IP pools, and SLA guarantees
+
+This creates a B2B distribution channel that multiplies demand without proportional marketing spend.
+
+## Why All Three Must Exist Together
+
+The three product lines create a flywheel:
+
+1. **Backbone brings consumers** → generates subscription revenue → attracts providers with predictable demand
+2. **Edge brings B2B clients** → generates high-margin revenue → funds token buyback → increases token value
+3. **White-label multiplies distribution** → more demand across the network → better economics for providers
+4. **More providers** → better coverage, lower latency, more residential IPs → attracts more consumers and B2B clients
+
+Each line strengthens the others. Remove any one, and the flywheel slows.
+
+## How Miwim Is Different
+
+If Grass is the "AWS of bandwidth" (supply aggregation for enterprise), Miwim is **"AWS + Vercel + Stripe"** — the full stack from supply aggregation through consumer product to developer API.
+
+| | Grass | Mysterium | Sentinel | **Miwim** |
+|---|---|---|---|---|
+| Supply aggregation | ✓ | ✓ | ✓ | **✓** |
+| Consumer product | ✗ | Partial | ✗ | **✓** |
+| B2B API | Enterprise only | ✗ | ✗ | **✓** |
+| Token utility | Points (planned) | Pay-per-use | Pay-per-use | **5 demand sinks** |
+| China-optimized | ✗ | ✗ | ✗ | **✓** |
+| Singbox support | ✗ | ✗ | ✗ | **✓** |

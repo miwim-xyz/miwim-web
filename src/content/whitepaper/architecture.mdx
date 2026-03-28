@@ -1,0 +1,125 @@
+# Architecture
+
+## Network Topology
+
+Miwim's architecture follows a three-tier marketplace model:
+
+```
+SUPPLY SIDE
+┌──────────┐  ┌──────────────┐  ┌──────────────┐
+│ VPS /    │  │ Home         │  │ Mobile       │
+│ Servers  │  │ Broadband    │  │ Hotspots     │
+└────┬─────┘  └──────┬───────┘  └──────┬───────┘
+     │               │                 │
+     └───────────────┼─────────────────┘
+                     ▼
+┌─────────────────────────────────────────────────┐
+│              MIWIM PLATFORM                      │
+│  Node Scheduler • Smart Routing • Token Economy  │
+│  Subscription API • White-Label Gateway          │
+└──────────┬──────────────┬──────────────┬────────┘
+           ▼              ▼              ▼
+    ┌────────────┐ ┌────────────┐ ┌────────────┐
+    │ Backbone   │ │ Edge       │ │ White-Label │
+    │ C-end VPN  │ │ B2B Resi   │ │ API (B2B)  │
+    └────────────┘ └────────────┘ └────────────┘
+DEMAND SIDE
+```
+
+## Node Role Auto-Detection
+
+Nodes are not manually labeled. The provider agent automatically benchmarks the node at registration and the platform assigns an optimal role.
+
+### Benchmark Suite
+
+| Test | Method | Output |
+|------|--------|--------|
+| Latency matrix | Ping 10 endpoints across CN, JP, US, EU, SG | Per-region latency (ms) |
+| Bandwidth | iperf3-style upload/download test | Up/down Mbps |
+| IP type | Query ipinfo.io / ip2location | `datacenter` or `residential` + ISP |
+| Route quality | Traceroute to target regions | Hop count, path quality score |
+
+### Role Assignment
+
+```
+IF ip_type == "residential" AND uptime > 90%:
+    role = "residential_exit"    → Highest value, home IP traffic
+
+ELIF ip_type == "datacenter" AND bandwidth > 100Mbps AND latency_CN < 50ms:
+    role = "relay"               → High bandwidth relay near users
+
+ELIF ip_type == "datacenter" AND latency_target < 30ms:
+    role = "exit"                → Datacenter exit near target sites
+
+ELSE:
+    role = "backup"              → Standby for failover pool
+```
+
+Roles are **dynamic**, re-evaluated every 6 hours. A single node can serve multiple roles simultaneously (e.g., relay for CN users and exit for JP users). Nodes with health_score < 30 are automatically removed from active duty.
+
+## Residential IP Routing (Edge)
+
+Users never directly connect to residential nodes. All Edge traffic flows through a forced chain proxy with **reverse tunnel** architecture:
+
+```
+User (CN) ──TLS──> Relay (HK) ──reverse tunnel──> Residential Exit (US home) ──> Target
+
+Target sees: Real US residential IP
+Relay sees:  User IP + encrypted blob (cannot see destination)
+Exit sees:   Relay IP + destination (cannot see user identity)
+```
+
+### Why Reverse Tunnel?
+
+Home broadband nodes sit behind CGNAT, dynamic IPs, and ISP firewalls. The reverse tunnel solves this:
+
+1. Residential agent starts → initiates **outbound** VLESS/WS connection to relay on port 443
+2. This looks like normal HTTPS traffic to the ISP — no blocking
+3. Tunnel stays persistent with 24/7 keepalive
+4. When user traffic arrives at relay, it forwards down the existing tunnel
+5. Residential exit processes the request and responds through the same tunnel
+
+**Provider onboarding: download agent → run it → done.** No port forwarding, no router config.
+
+## Privacy Model — 5 Layers
+
+### Layer 1: TLS End-to-End
+User HTTPS traffic is encrypted by TLS. Exit nodes see destination domain (SNI) but cannot read content.
+
+### Layer 2: Multi-Hop Separation
+| Node Role | Can See | Cannot See |
+|-----------|---------|------------|
+| Relay | User's real IP | Destination, content |
+| Exit | Destination (SNI) | User's real IP |
+| Neither | — | Both identity AND destination |
+
+No single node can answer "who is accessing what."
+
+### Layer 3: Encrypted Client Hello (ECH)
+Premium tier encrypts the SNI field, hiding even the destination domain from exit nodes.
+
+### Layer 4: Binary Attestation
+Agent reports SHA256 hash at startup. Platform rejects mismatched hashes. Canary traffic audits detect tampering.
+
+### Layer 5: Economic Deterrent
+Providers stake 5,000+ $MIWIM. Tampering results in 10% stake slashing. Repeat offenders are permanently banned.
+
+## Smart Routing
+
+The routing engine selects optimal nodes for each user:
+
+```
+health_score = uptime × 0.4 + (100 - latency_rank) × 0.3 + bandwidth_rank × 0.3
+```
+
+Each user receives 3 route chains (primary + 2 fallbacks). Routing results are cached in Redis with 5-minute TTL. Failover is handled at the client level via Singbox's `urltest` outbound.
+
+### Backbone vs Edge Comparison
+
+| | Backbone | Edge |
+|---|---|---|
+| Hops | 1 (fast) or 2 (private) | Always 2 |
+| Latency | ~150ms / ~175ms | ~200-250ms |
+| IP type | Datacenter | Genuine residential |
+| Failover | urltest, {'<'}1s | urltest + IP pool rotation |
+| Use case | Daily browsing | E-commerce, scraping |

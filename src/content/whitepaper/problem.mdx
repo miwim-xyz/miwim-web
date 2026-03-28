@@ -1,0 +1,56 @@
+# The Problem
+
+The centralized proxy and VPN market suffers from three fundamental flaws that cannot be fixed within the existing architecture.
+
+## 1. Trust Crisis
+
+Centralized VPN and proxy providers require users to trust a single entity with their traffic, their data, and their prepaid funds. This trust is routinely violated:
+
+- **Operator disappearances**: In the Chinese proxy market alone, 10+ major operators shut down without warning in 2023-2024, each affecting hundreds of thousands of users who lost prepaid balances.
+- **Data breaches**: Centralized providers are honeypots for user data. When compromised, every user is exposed simultaneously.
+- **No recourse**: When an operator vanishes or is seized, users have no mechanism to recover funds or migrate their service.
+
+Users have adapted by maintaining 2-3 backup subscriptions simultaneously — a tax on consumers caused entirely by architectural centralization.
+
+## 2. IP Resource Monopoly
+
+The residential IP proxy market is controlled by a handful of companies:
+
+- **Bright Data** (formerly Luminati) controls 72M+ residential IPs and charges **$8-15 per GB**
+- **Oxylabs** and **Smartproxy** operate similar models at comparable pricing
+- IP sourcing is ethically questionable — many residential IPs are obtained by bundling bandwidth extraction into free mobile apps without clear user consent
+
+This creates a market where:
+- Prices are 10-50x higher than they need to be
+- Access is restricted to enterprise buyers
+- The actual bandwidth providers (home internet users) receive little to no compensation
+- Quality is inconsistent because providers don't know they're participating
+
+## 3. Single Point of Failure
+
+Every centralized proxy service has one failure mode: the operator. When that single point fails — whether through government seizure, financial collapse, or deliberate exit — every user loses access simultaneously.
+
+This is not a theoretical risk. It happens regularly:
+- Government crackdowns on proxy operators in China, Russia, and Iran
+- Server seizures affecting entire user bases overnight
+- Payment processor blocks cutting off services without warning
+
+There is no redundancy, no failover, and no continuity. The user experience is binary: it works until it doesn't.
+
+## The Gap
+
+No existing project combines all five elements needed to solve these problems:
+
+| Capability | Traditional VPN | Centralized Proxy | DePIN (Grass) | B2B Proxy (Bright Data) | **Miwim** |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Decentralized | ✗ | ✗ | ✓ | ✗ | **✓** |
+| Residential IPs | ✗ | ✗ | ✓ | ✓ | **✓** |
+| Consumer app | ✓ | ✓ | ✗ | ✗ | **✓** |
+| White-label API | ✗ | ✗ | ✗ | ✓ | **✓** |
+| Token incentive | ✗ | ✗ | ✓ | ✗ | **✓** |
+
+**Miwim is the only project that checks every box.**
+
+Grass proves the supply model works but only sells B2B. Mysterium proved the concept but failed on UX. Bright Data dominates enterprise but has no consumer product and ethically questionable sourcing. Traditional VPNs can't survive advanced censorship. Centralized proxies can't survive trust.
+
+The market needs a full-stack solution. That's Miwim.

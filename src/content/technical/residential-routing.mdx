@@ -1,0 +1,106 @@
+# Residential IP Routing
+
+## Overview
+
+Miwim Edge provides genuine residential IP access through a reverse tunnel architecture. Users never directly connect to residential nodes — all traffic flows through a forced chain proxy.
+
+## Architecture
+
+```
+User (CN) ──TLS──> Relay (HK datacenter) ──reverse tunnel──> Residential Exit (US home) ──> Target
+
+Target sees: Real US residential IP address
+Relay sees:  User IP + encrypted blob (cannot see destination)
+Exit sees:   Relay IP + destination (cannot see user identity)
+```
+
+## Why Reverse Tunnel?
+
+Home broadband nodes face fundamental connectivity challenges:
+- **CGNAT**: Most ISPs use Carrier-Grade NAT, making inbound connections impossible
+- **Dynamic IPs**: Home IPs change regularly, breaking persistent connections
+- **ISP firewalls**: Many ISPs block inbound connections on residential lines
+- **User friction**: Requiring port forwarding kills provider onboarding
+
+The reverse tunnel eliminates all of these:
+
+1. Residential agent starts → initiates **outbound** VLESS/WS connection to assigned relay on port 443
+2. This outbound connection looks like normal HTTPS traffic — ISPs won't block it
+3. Tunnel stays persistent (24/7 keepalive, heartbeat every 15s)
+4. When user traffic arrives at relay, it forwards **down** the existing tunnel
+5. Residential exit processes the request and responds through the same tunnel
+
+**Result**: Provider onboarding is **download agent → run it → done.** Zero technical knowledge required.
+
+## Protocol Choice
+
+| Phase | Protocol | Rationale |
+|-------|----------|-----------|
+| MVP | VLESS over WebSocket (port 443) | Maximum home network compatibility, looks like HTTPS |
+| Future | WireGuard option | Kernel-level, lower overhead for advanced providers |
+
+## Singbox Chain Config (per user)
+
+```json
+{
+  "outbounds": [
+    {
+      "type": "urltest",
+      "tag": "edge-auto",
+      "outbounds": ["chain-1", "chain-2", "chain-3"],
+      "interval": "30s",
+      "tolerance": 50
+    },
+    {
+      "type": "chain",
+      "tag": "chain-1",
+      "outbounds": ["relay-hk-1", "residential-us-1"]
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "relay-hk-1",
+      "server": "relay-hk.miwim.io",
+      "server_port": 8388,
+      "method": "2022-blake3-aes-128-gcm",
+      "password": "..."
+    },
+    {
+      "type": "vless",
+      "tag": "residential-us-1",
+      "server": "10.0.0.x",
+      "server_port": 443,
+      "uuid": "...",
+      "tls": { "enabled": true }
+    }
+  ]
+}
+```
+
+Note: `residential-us-1` server address is the relay's **internal tunnel endpoint**, not the residential node's public IP. The residential node's real IP is never exposed in user configs.
+
+## Residential Node Agent Behavior
+
+- **Startup**: Initiates outbound VLESS/WS persistent tunnel to assigned relay
+- **Keepalive**: Heartbeat every 15s, auto-reconnect on drop
+- **Firewall**: Only outbound connections — no inbound ports needed
+- **Traffic**: Exits via default NIC (home network adapter)
+- **Health**: Reports latency, bandwidth, ISP stability every 30s
+- **Failure**: Relay detects tunnel loss within 15s; platform removes node from active pool
+
+## IP Pool Design
+
+- Users are assigned to an **IP pool** (e.g., "US West residential"), not a fixed node
+- Pool contains 5-20 residential nodes in the same region
+- When one node goes offline, traffic auto-routes to another node in the pool
+- **Dedicated IP binding**: Available at higher price with SLA guarantee from provider staking
+
+## Backbone vs Edge Comparison
+
+| | Backbone | Edge |
+|---|---|---|
+| Hops | 1 (fast) or 2 (private) | Always 2 (relay → residential) |
+| Latency | ~150ms / ~175ms | ~200-250ms |
+| Tunnel type | Direct or relay-to-DC | Reverse tunnel from residential |
+| IP type | Datacenter | Genuine residential |
+| Failover | Singbox urltest, {'<'}1s | urltest + IP pool rotation |
+| Use case | Daily browsing, streaming | E-commerce, scraping, anti-detection |

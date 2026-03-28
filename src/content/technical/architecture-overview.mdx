@@ -1,0 +1,77 @@
+# Architecture Overview
+
+## System Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      MIWIM PLATFORM BACKEND                      │
+│                                                                 │
+│  ┌──────────┐  ┌──────────────┐  ┌─────────────────────────┐   │
+│  │ Node     │  │ Subscription │  │ Config Generator         │   │
+│  │ Registry │  │ API          │  │ (Backbone / Edge configs) │   │
+│  └────┬─────┘  └──────┬───────┘  └───────────┬─────────────┘   │
+│       │               │                      │                 │
+│  ┌────┴───────────────┴──────────────────────┴──────┐          │
+│  │              PostgreSQL + Redis                   │          │
+│  └───────────────────────────────────────────────────┘          │
+│                                                                 │
+│  ┌──────────────────┐  ┌──────────────────┐                    │
+│  │ Health Monitor   │  │ Smart Router     │                    │
+│  │ (Prometheus)     │  │                  │                    │
+│  └──────────────────┘  └──────────────────┘                    │
+└────────┬────────────────────┬──────────────────┬────────────────┘
+         │                    │                  │
+  ┌──────┴──────┐   ┌────────┴────────┐  ┌──────┴──────┐
+  │ DC Provider │   │ Residential     │  │ Android     │
+  │ Agent (Go)  │   │ Agent (Go)      │  │ App (Kotlin)│
+  │ Backbone    │   │ Reverse tunnel  │  │ Singbox lib │
+  │ relay/exit  │   │ to relay → Edge │  └─────────────┘
+  └─────────────┘   └─────────────────┘
+```
+
+## Component Responsibilities
+
+### Node Registry
+Manages the lifecycle of all provider nodes. Handles registration, role assignment, status transitions (pending → active → degraded → offline), and geographic metadata.
+
+### Subscription API
+Handles user authentication, plan management, and subscription token generation. Each user receives a unique subscription URL that the Android app uses to fetch its configuration.
+
+### Config Generator
+Dynamically generates Singbox JSON configurations per user. Includes primary node + 2 fallback nodes, selected by the Smart Router based on user location and node health.
+
+### Health Monitor
+Runs active health checks every 5 minutes. Measures latency, packet loss, bandwidth, and reachability. Feeds data into the health scoring system.
+
+### Smart Router
+Selects optimal nodes for each user request. Considers health score, geographic proximity, load balancing, and product type (Backbone vs Edge). Caches results in Redis (5-minute TTL).
+
+## Tech Stack
+
+| Component | Technology | Rationale |
+|-----------|-----------|-----------|
+| Provider Agent | Go + Singbox core | Performance, single binary |
+| Backend API | Go (Fiber) | Fast, same language as agent |
+| Database | PostgreSQL | Reliable, relational data |
+| Cache | Redis | Health cache, sessions, rate limiting |
+| Monitoring | Prometheus + Grafana | Industry standard |
+| Reverse Proxy | Caddy | Auto-HTTPS, simple config |
+| Deployment | Docker + docker-compose | Simple orchestration for MVP |
+| Android App | Kotlin + Singbox library | Already built |
+
+## Data Flow
+
+### Backbone (Consumer VPN)
+```
+User → App fetches config → Connects to best datacenter node → Traffic proxied → Target
+```
+
+### Edge (Residential IP)
+```
+User → App fetches config → Connects to relay → Relay forwards via reverse tunnel → Residential exit → Target
+```
+
+### Provider Registration
+```
+Agent starts → Runs benchmark suite → POST /api/nodes/register → Platform assigns role → Agent starts Singbox → Heartbeat loop begins
+```

@@ -1,0 +1,121 @@
+# Smart Routing
+
+## Overview
+
+The smart routing engine selects the optimal set of nodes for each user request, considering health scores, geographic proximity, load, and product type.
+
+## Health Score Formula
+
+```
+health_score = uptime × 0.4 + (100 - latency_rank) × 0.3 + bandwidth_rank × 0.3
+```
+
+Where:
+- **uptime**: Percentage of time node was reachable in the last 24 hours (0-100)
+- **latency_rank**: Percentile rank of the node's latency to the user's region (0-100, lower is better)
+- **bandwidth_rank**: Percentile rank of the node's available bandwidth (0-100, higher is better)
+
+### Thresholds
+
+| Score Range | Status | Action |
+|-------------|--------|--------|
+| 70-100 | Active | Eligible for primary routing |
+| 30-69 | Degraded | Eligible for fallback only |
+| 0-29 | Offline | Removed from active pool |
+
+## Routing Algorithm
+
+```python
+def route(user_id, country_preference, product_type):
+    # 1. Query eligible nodes
+    if product_type == "backbone":
+        nodes = query_nodes(
+            status="active",
+            role=["relay", "exit"],
+            country=country_preference  # optional
+        )
+    elif product_type == "edge":
+        relays = query_nodes(status="active", role="relay")
+        exits = query_nodes(status="active", role="residential_exit",
+                           country=country_preference)
+
+    # 2. Sort by health_score DESC
+    nodes.sort(key=lambda n: n.health_score, reverse=True)
+
+    # 3. Select top 3 (primary + 2 fallbacks)
+    selected = nodes[:3]
+
+    # 4. Build route chains
+    if product_type == "backbone":
+        chains = [node_to_config(n) for n in selected]
+    elif product_type == "edge":
+        chains = [
+            build_chain(relay=best_relay_for(exit), exit=exit)
+            for exit in selected
+        ]
+
+    # 5. Cache in Redis (TTL: 5 min)
+    cache.set(f"route:{user_id}", chains, ttl=300)
+
+    return chains
+```
+
+## Geographic Relay Placement
+
+For optimal latency, the routing engine follows these rules:
+
+1. **Relay should be geographically close to the user** — minimizes first-hop latency
+2. **Exit should be close to the target** — minimizes last-hop latency
+3. **For Edge: relay must have reverse tunnel to the residential exit** — non-negotiable
+4. **Avoid same-country relay+exit** — for privacy (identity/destination separation)
+
+### Example Routes
+
+| User Location | Target | Relay | Exit | Product |
+|---------------|--------|-------|------|---------|
+| Shanghai | US websites | Hong Kong | Los Angeles DC | Backbone |
+| Shanghai | US residential IP | Hong Kong | US home (reverse tunnel) | Edge |
+| Tokyo | EU websites | Tokyo | Frankfurt DC | Backbone |
+
+## Failover
+
+### Client-Side (Singbox urltest)
+- Primary + 2 fallback nodes in every config
+- Singbox tests all 3 every 3 minutes
+- If primary fails latency/connectivity check → auto-switch in under 1 second
+- User experiences brief pause, no disconnect
+
+### Server-Side (Config Push)
+- If a node goes offline, platform detects via missed heartbeats (60s threshold)
+- Pushes updated config to affected users within 60 seconds
+- App auto-refreshes config periodically (every 30 minutes)
+
+### Failover Chain Construction
+
+Each user receives 3 independent chains:
+
+```json
+{
+  "type": "urltest",
+  "tag": "auto",
+  "outbounds": ["chain-primary", "chain-fallback-1", "chain-fallback-2"],
+  "interval": "3m",
+  "tolerance": 50
+}
+```
+
+Chains are selected from **different physical locations** to ensure a regional outage doesn't affect all fallbacks.
+
+## Redis Caching Strategy
+
+| Key | Value | TTL |
+|-----|-------|-----|
+| `route:{user_id}` | JSON array of 3 route chains | 5 min |
+| `health:{node_id}` | Latest health score | 1 min |
+| `nodes:active:{country}` | List of active node IDs | 30 sec |
+| `config:{user_id}` | Generated Singbox JSON | 5 min |
+
+Cache invalidation:
+- Node status change → clear `nodes:active:*` for affected country
+- Health score update → clear `health:{node_id}`
+- User config regenerated → clear `route:{user_id}` and `config:{user_id}`

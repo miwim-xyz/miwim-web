@@ -1,0 +1,101 @@
+# Token Pricing Mechanism
+
+## Hybrid Oracle Model
+
+All services are priced in **USD**. The $MIWIM token is an alternative payment method with a discount.
+
+```
+Plan price:      $10/month (set in USD, stable)
+Fiat payment:    $10 via Stripe/stablecoin
+Token payment:   $10 × 0.80 discount = $8 equivalent in $MIWIM
+Token amount:    $8 / TWAP_24h_price
+                 If $MIWIM = $0.05 → user pays 160 tokens
+                 If $MIWIM = $0.10 → user pays 80 tokens
+```
+
+## Price Oracle Implementation
+
+| Phase | Oracle Source | Update Frequency |
+|-------|-------------|-----------------|
+| Pre-token (MVP) | N/A — fiat only | — |
+| TGE | Uniswap/Raydium on-chain TWAP | Every block, 24h moving average |
+| Scale | Chainlink + DEX TWAP median | Every block, dual-source |
+
+### Why TWAP?
+
+Using 24-hour Time-Weighted Average Price instead of spot price prevents manipulation:
+
+- **Flash crash exploit**: Attacker dumps token → buys services cheap → price recovers. TWAP smooths this out.
+- **Pump and dump**: Artificially inflated price means providers get fewer tokens per GB. TWAP protects providers.
+- **Low liquidity spikes**: In early markets, single trades can move price 10%+. TWAP averages this away.
+
+## Provider Reward Pricing
+
+Provider earnings are **stable in USD terms** regardless of token volatility:
+
+```
+Provider rate:   $0.10 per GB served (set in USD, stable)
+Payout:          $0.10 / TWAP_24h_price = X $MIWIM tokens
+                 If $MIWIM = $0.05 → provider earns 2 tokens/GB
+                 If $MIWIM = $0.10 → provider earns 1 token/GB
+```
+
+This prevents the scenario where providers leave because token price dropped and their earnings became worthless.
+
+## User Payment Flow
+
+```
+1. User selects plan ($10/month)
+2. Chooses payment method:
+   a. Fiat → Stripe checkout → $10 charged
+   b. Token → Frontend shows: "Pay 160 $MIWIM (saves $2)"
+      → User approves on-chain tx → Tokens transferred to platform treasury
+3. Subscription activated for 30 days
+4. If token payment: tokens held in treasury (not immediately sold)
+```
+
+## Provider Reward Payout Flow
+
+```
+1. Provider serves X GB of traffic in a day
+2. Daily settlement job runs at 00:00 UTC
+3. Calculates reward: X GB × $0.10/GB = $Y USD equivalent
+4. Fetches 24h TWAP: $Y / TWAP = Z tokens
+5. Z tokens added to provider's pending balance
+6. After 30-day vesting: tokens available for withdrawal
+```
+
+## Concrete Example
+
+```
+Month 1 after TGE:
+- Token price: $0.05 (TWAP)
+- 50 providers, each staking 5,000 tokens    = 250,000 locked
+- 10 B2B clients, each staking 10,000 tokens = 100,000 locked
+- Platform revenue: $10K
+  - 10% buyback: $1K → buys 20,000 tokens at TWAP
+  - 30% of users pay with token: $2.4K buying pressure
+- Provider rewards: 13.3M tokens emitted (Year 1 rate)
+  - Vested for 30 days before liquid
+
+Net: staking absorbs 350K tokens, buyback + user demand adds
+~$3.4K monthly buying pressure. Low float + staking locks
+are the primary stabilizers at this stage.
+```
+
+## Edge Cases
+
+### Price Crash (>50% drop in 7 days)
+- Emission-to-revenue cap activates: fewer tokens minted per GB
+- Reduces sell pressure from provider rewards
+- Buyback continues at same USD rate (buys more tokens cheaper)
+
+### Price Spike (>100% increase in 7 days)
+- No special action needed — providers earn fewer tokens per GB (same USD value)
+- Users get better token discount value
+- System self-corrects through TWAP smoothing
+
+### Manipulation Attempt
+- TWAP requires sustained price movement over 24h — expensive to maintain
+- Dual oracle (Chainlink + DEX TWAP) at scale makes manipulation even harder
+- Platform can pause token payments if oracle deviation exceeds 20%

@@ -1,0 +1,86 @@
+# Privacy Model
+
+Since node providers sit in the data path, privacy protection must be **architectural** — not just policy-based.
+
+## Layer 1: TLS End-to-End Encryption
+
+User HTTPS traffic is encrypted end-to-end by TLS. Even if an exit node inspects packets:
+- **Visible**: Destination domain (via SNI header)
+- **Encrypted**: Actual content (passwords, data, cookies)
+
+This is the same exposure level as using any ISP.
+
+## Layer 2: Multi-Hop Identity/Destination Separation
+
+This is the core protection. No single node can answer "who is accessing what."
+
+| Node Role | Can See | Cannot See |
+|-----------|---------|------------|
+| Relay node | User's real IP address | Destination domain, content |
+| Exit node | Destination domain (SNI) | User's real IP address |
+| Neither | — | Both user identity AND destination |
+
+This separation mirrors Tor's onion routing principle, simplified to 2 hops for performance.
+
+## Layer 3: Encrypted Client Hello (ECH)
+
+For premium-tier users, ECH encrypts the SNI field. This means even the exit node cannot see which domain the user is visiting — it only sees the target server's IP address.
+
+> ECH requires target server support (Cloudflare, major CDNs). Coverage is growing but not universal.
+
+## Layer 4: Zero-Log Agent + Attestation
+
+| Threat | Defense |
+|--------|---------|
+| Provider modifies agent binary to add logging | Binary hash attestation: agent reports SHA256 at startup. Platform rejects mismatched hashes. |
+| Provider runs packet sniffer alongside agent | Traffic sampling audit: platform sends canary requests through nodes and verifies no interception. |
+| Provider correlates traffic patterns | Node rotation: users are automatically rotated across exit nodes. |
+
+### Binary Attestation Flow
+
+```
+1. Agent starts → computes SHA256 of own binary
+2. POST /api/nodes/{id}/attest { hash: "abc123..." }
+3. Platform compares against known-good hash for agent version
+4. Mismatch → node flagged, removed from active pool
+5. Future: SGX/SEV secure enclave attestation
+```
+
+### Canary Traffic Audit
+
+```
+1. Platform generates canary request (known URL, known expected response)
+2. Routes canary through target node
+3. Compares response with expected — any modification = tampering
+4. Failed canary → immediate investigation + potential slashing
+5. Canary frequency: random, 2-5 per node per day
+```
+
+## Layer 5: Economic Deterrent (Staking + Slashing)
+
+- Providers stake **5,000+ $MIWIM** to register a node
+- Caught tampering → **10% of stake is slashed**
+- At $0.05/token: $250 penalty per violation — more than the gain from logging
+- Repeat offenders are **permanently banned** and lose entire stake
+
+### Slashing Conditions
+
+| Violation | Penalty |
+|-----------|---------|
+| Failed binary attestation | 10% stake slash + 24h suspension |
+| Failed canary audit | 10% stake slash + investigation |
+| >5% monthly downtime | 10% stake slash |
+| Confirmed data tampering | 100% stake slash + permanent ban |
+| Multiple user complaints | Investigation → potential slash |
+
+## Privacy Comparison
+
+| Provider Type | Knows User | Knows Destination | Knows Content |
+|--------------|:---:|:---:|:---:|
+| Centralized VPN (NordVPN) | Yes | Yes | No (TLS) |
+| Centralized proxy | Yes | Yes | No (TLS) |
+| Miwim relay node | Yes | **No** | No |
+| Miwim exit node | **No** | Yes (SNI) | No (TLS) |
+| Miwim with ECH | **No** | **No** | No |
+
+**Miwim is architecturally more private than any centralized alternative.**

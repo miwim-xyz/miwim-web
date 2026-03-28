@@ -1,0 +1,105 @@
+# Tokenomics
+
+## Token Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Token name | $MIWIM |
+| Total supply | 1,000,000,000 (fixed, no inflation) |
+| Initial circulating at TGE | ~6% (60M tokens) |
+| Full emission timeline | 4 years |
+| Chain | TBD (Solana or Base recommended) |
+
+## Token Allocation
+
+| Category | % | Tokens | Vesting |
+|----------|---|--------|---------|
+| Node rewards | 40% | 400,000,000 | 4-year emission with annual halving |
+| Team & advisors | 20% | 200,000,000 | 2-year vest, 6-month cliff |
+| Investors | 15% | 150,000,000 | 1-year vest, milestone unlock |
+| Ecosystem fund | 15% | 150,000,000 | Multisig/DAO controlled |
+| Community | 10% | 100,000,000 | Airdrop, referral, incentives |
+
+## Emission Schedule (Node Rewards)
+
+Node reward emission follows a halving curve:
+
+| Year | Tokens Released | % of Node Pool | Monthly Average |
+|------|----------------|----------------|-----------------|
+| Year 1 | 160,000,000 | 40% | ~13.3M/month |
+| Year 2 | 100,000,000 | 25% | ~8.3M/month |
+| Year 3 | 80,000,000 | 20% | ~6.7M/month |
+| Year 4 | 60,000,000 | 15% | ~5.0M/month |
+
+Rewards are distributed proportionally:
+- Bandwidth contributed (50% weight)
+- Uptime (30% weight)
+- Geographic scarcity bonus (20% weight)
+
+## Token Utility — 5 Demand Sinks
+
+### 1. Pay — User Discount (20% off)
+Users who pay with $MIWIM receive a 20% discount on subscriptions. A $10/month plan costs only $8 equivalent in tokens. This creates persistent buy pressure from consumer demand.
+
+### 2. Stake — Provider Collateral
+Every node provider must stake a minimum of 5,000 $MIWIM to participate. Staked tokens are locked while the node is active. At 500 nodes: 2.5M tokens locked in provider stakes.
+
+**Slashing**: 10% of stake is burned if SLA is violated (>5% downtime in a month).
+
+### 3. Earn — Bandwidth Rewards
+Providers earn $MIWIM proportional to bandwidth served and quality score. Earnings are denominated in USD terms (stable regardless of token price) and paid out in tokens using 24-hour TWAP pricing.
+
+### 4. Govern — Network Parameters
+Token holders vote on:
+- Node reward distribution ratios
+- Geographic incentive multipliers
+- Fee structure changes
+- Ecosystem fund grant allocation
+
+### 5. Burn — Revenue Buyback
+10% of all platform revenue is used for monthly token buyback via on-chain TWAP orders. Bought-back tokens are partially burned (5%) and partially redistributed to top-performing nodes (5%).
+
+## Price Stability Mechanisms
+
+| Mechanism | How It Works |
+|-----------|-------------|
+| Emission-to-revenue cap | Fewer tokens minted per GB if price drops below threshold |
+| Revenue buyback | 10% of revenue buys tokens monthly via TWAP |
+| Provider reward vesting | 30-day vest on all reward tokens |
+| Low initial float | Only ~6% circulating at TGE |
+| Staking lock | Provider + B2B stakes locked while active |
+
+## Hybrid Oracle Pricing
+
+All services are priced in USD. Token is an alternative payment method:
+
+```
+Plan price:      $10/month (stable, set in USD)
+Fiat payment:    $10 via Stripe/stablecoin
+Token payment:   $10 × 0.80 = $8 equivalent in $MIWIM
+Token amount:    $8 / TWAP_24h_price
+```
+
+Using 24-hour TWAP instead of spot price prevents flash-crash exploits.
+
+## TGE Plan
+
+### Initial Circulating Supply
+
+| Source | Tokens | % of Supply |
+|--------|--------|-------------|
+| Liquidity provision | 30,000,000 | 3% |
+| Community airdrop | 20,000,000 | 2% |
+| Early node rewards | ~10,000,000 | 1% |
+| **Total initial float** | **~60,000,000** | **~6%** |
+
+Low float enables controlled price discovery. All other tokens are locked, vesting, or staked.
+
+## Comparable Projects
+
+| Project | Market Cap | Token Model | Miwim Difference |
+|---------|-----------|-------------|-----------------|
+| Grass | $1B+ | Points → Token | Miwim has revenue from day 1 |
+| Helium | $1.5B | Burn-and-mint | Miwim uses staking + buyback |
+| Filecoin | $3B | Collateral staking | Similar staking model |
+| Mysterium | ~$50M | Pay-per-use | Miwim adds subscription + B2B + buyback |

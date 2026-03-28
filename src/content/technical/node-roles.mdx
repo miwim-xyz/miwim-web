@@ -1,0 +1,94 @@
+# Node Roles & Detection
+
+## Overview
+
+Nodes in the Miwim network are not manually categorized. The provider agent automatically benchmarks each node at startup, and the platform assigns an optimal role based on the benchmark results.
+
+## Benchmark Suite
+
+The benchmark suite runs on agent startup and re-runs every 6 hours to capture changing network conditions.
+
+### Tests Performed
+
+| Test | Method | Output |
+|------|--------|--------|
+| Latency matrix | Ping 10 target endpoints across CN, JP, US, EU, SG | Per-region latency (ms) |
+| Bandwidth | iperf3-style upload/download to platform server | Up/down Mbps |
+| IP type classification | Query ipinfo.io / ip2location API | `datacenter` or `residential` + ISP name |
+| Route quality | Traceroute to CN/JP/US/EU targets | Hop count, path quality score |
+
+### Benchmark Endpoints
+
+```
+latency_targets:
+  - ping-cn.miwim.io    # Shanghai
+  - ping-jp.miwim.io    # Tokyo
+  - ping-us.miwim.io    # Los Angeles
+  - ping-eu.miwim.io    # Frankfurt
+  - ping-sg.miwim.io    # Singapore
+```
+
+## Role Assignment Logic
+
+```python
+def assign_role(benchmark_result):
+    ip_type = benchmark_result.ip_type
+    bandwidth = benchmark_result.bandwidth_mbps
+    latency_cn = benchmark_result.latency_ms["CN"]
+    latency_target = min(benchmark_result.latency_ms.values())
+    uptime = benchmark_result.uptime_history_pct
+
+    if ip_type == "residential" and uptime > 90:
+        return "residential_exit"
+        # Highest value — genuine home IP for Edge traffic
+
+    elif ip_type == "datacenter" and bandwidth > 100 and latency_cn < 50:
+        return "relay"
+        # High bandwidth relay near Chinese users
+
+    elif ip_type == "datacenter" and latency_target < 30:
+        return "exit"
+        # Datacenter exit close to target websites
+
+    else:
+        return "backup"
+        # Standby for failover pool
+```
+
+## Role Descriptions
+
+### `residential_exit`
+- **Purpose**: Exit node for Edge (residential IP) traffic
+- **Requirements**: Genuine residential IP, >90% uptime history
+- **Value**: Highest — residential IPs are the scarcest resource
+- **Routing**: Always behind a relay via reverse tunnel
+- **Reward multiplier**: 2.5x base rate
+
+### `relay`
+- **Purpose**: First hop for users, forwards traffic to exit nodes
+- **Requirements**: Datacenter IP, 100+ Mbps bandwidth, under 50ms latency to CN
+- **Value**: High — critical for user experience
+- **Routing**: Accepts direct user connections, forwards to exits
+- **Reward multiplier**: 1.5x base rate
+
+### `exit`
+- **Purpose**: Final hop for Backbone traffic, directly reaches target sites
+- **Requirements**: Datacenter IP, under 30ms latency to target region
+- **Value**: Standard
+- **Routing**: Receives forwarded traffic from relays
+- **Reward multiplier**: 1.0x base rate
+
+### `backup`
+- **Purpose**: Standby nodes for failover
+- **Requirements**: Active and reachable
+- **Value**: Low but necessary for redundancy
+- **Routing**: Activated when primary nodes fail
+- **Reward multiplier**: 0.3x base rate (standby fee)
+
+## Dynamic Re-evaluation
+
+- Roles are re-evaluated every **6 hours** based on fresh benchmark data
+- A single node can serve **multiple roles** simultaneously
+- Nodes with `health_score < 30` are removed from active duty
+- Geographic scarcity bonus: rare locations earn higher rewards
+- Role changes are logged for audit and analytics

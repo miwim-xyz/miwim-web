@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-bg-primary: #000000;
+  --color-bg-card: #161618;
+  --color-bg-card-deep: #0A0A0B;
+
+  /* Text */
+  --color-text-primary: #F3F4F6;
+  --color-text-secondary: #93a1a1;
+  --color-text-tertiary: #657b83;
+
+  /* Brand */
+  --color-brand-primary: #2aa198;
+  --color-brand-secondary: #268bd2;
+  --color-brand-accent: #d33682;
+  --color-brand-warning: #cb4b16;
+  --color-brand-danger: #dc322f;
+  --color-brand-success: #859900;
+  --color-brand-gold: #b58900;
+  --color-brand-discord: #5865F2;
+
+  /* Font families */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  /* Glass & borders (need rgba, not in @theme) */
+  --bg-glass: rgba(22, 22, 24, 0.8);
+  --border-subtle: rgba(147, 161, 161, 0.1);
+  --border-hover: rgba(147, 161, 161, 0.2);
+  --border-active: rgba(42, 161, 152, 0.4);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  font-family: var(--font-sans);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-tertiary);
+  border-radius: 4px;
+}
+
+/* Scroll indicator animation */
+@keyframes scroll-line {
+  0% { transform: translateY(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(30px); opacity: 0; }
+}
+
+/* Float animation for product mockup */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Pulsing dot */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}

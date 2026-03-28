@@ -1,0 +1,155 @@
+# Provider Agent
+
+The Miwim provider agent is a lightweight Go binary that runs on provider machines, managing the Singbox proxy service and reporting health data to the platform.
+
+## System Requirements
+
+| Requirement | Minimum | Recommended |
+|-------------|---------|-------------|
+| OS | Linux (Ubuntu 20.04+, Debian 11+) | Ubuntu 22.04 LTS |
+| CPU | 1 vCPU | 2 vCPU |
+| RAM | 512 MB | 1 GB |
+| Bandwidth | 50 Mbps | 200+ Mbps |
+| Storage | 1 GB | 5 GB |
+| Network | Outbound port 443 open | All outbound open |
+
+## Installation
+
+```bash
+curl -fsSL https://install.miwim.io | bash
+```
+
+The installer:
+1. Downloads the latest agent binary
+2. Creates `/etc/miwim/config.yaml` from template
+3. Installs Singbox core
+4. Sets up systemd service (`miwim-agent.service`)
+5. Starts the agent and runs initial benchmark
+
+## Configuration
+
+```yaml
+# /etc/miwim/config.yaml
+platform:
+  api_url: https://api.miwim.io
+  node_id: "uuid-assigned-at-registration"
+  auth_token: "jwt-token-from-registration"
+
+agent:
+  singbox_path: /usr/local/bin/sing-box
+  singbox_config: /etc/miwim/singbox.json
+  metrics_port: 9090
+  heartbeat_interval: 30s
+  benchmark_interval: 6h
+
+# For residential nodes only:
+tunnel:
+  enabled: true
+  relay_address: relay-hk.miwim.io:443
+  protocol: vless-ws
+  uuid: "tunnel-uuid"
+  keepalive: 15s
+```
+
+## Heartbeat Protocol
+
+The agent sends health data to the platform every 30 seconds:
+
+```
+POST /api/nodes/{id}/heartbeat
+Authorization: Bearer {auth_token}
+Content-Type: application/json
+
+{
+  "timestamp": "2026-07-15T10:30:00Z",
+  "status": "active",
+  "uptime_seconds": 86400,
+  "cpu_usage_pct": 12.5,
+  "memory_usage_pct": 34.2,
+  "bandwidth_up_mbps": 95.4,
+  "bandwidth_down_mbps": 210.8,
+  "active_connections": 42,
+  "latency_ms": {
+    "CN": 45,
+    "JP": 12,
+    "US": 180,
+    "EU": 95,
+    "SG": 30
+  },
+  "agent_version": "0.3.1",
+  "binary_hash": "sha256:abc123..."
+}
+```
+
+### Response
+
+```json
+{
+  "status": "ok",
+  "role": "relay",
+  "config_update": null,
+  "next_benchmark_at": "2026-07-15T16:00:00Z"
+}
+```
+
+If `config_update` is non-null, the agent fetches and applies the new Singbox configuration.
+
+## Metrics Endpoint
+
+The agent exposes Prometheus metrics at `:9090/metrics`:
+
+```
+# Node status
+miwim_agent_up 1
+miwim_agent_uptime_seconds 86400
+
+# Traffic
+miwim_traffic_bytes_total{direction="up"} 1234567890
+miwim_traffic_bytes_total{direction="down"} 9876543210
+miwim_active_connections 42
+
+# Performance
+miwim_latency_ms{target="CN"} 45
+miwim_latency_ms{target="JP"} 12
+miwim_bandwidth_mbps{direction="up"} 95.4
+miwim_bandwidth_mbps{direction="down"} 210.8
+
+# System
+miwim_cpu_usage_pct 12.5
+miwim_memory_usage_pct 34.2
+```
+
+## Benchmark Routine
+
+Runs on startup and every 6 hours:
+
+```
+1. Latency test → ping 10 regional endpoints
+2. Bandwidth test → iperf3-style up/down measurement
+3. IP classification → query ipinfo.io API
+4. Route quality → traceroute to 5 targets
+5. Binary attestation → compute and report SHA256
+6. Report results → POST /api/nodes/{id}/benchmark
+```
+
+## Reverse Tunnel Setup (Residential Nodes)
+
+When `tunnel.enabled: true`:
+
+```
+1. Agent starts VLESS/WS outbound connection to relay
+2. Connection looks like HTTPS traffic (port 443)
+3. Tunnel stays persistent with 15s keepalive
+4. If tunnel drops: auto-reconnect with exponential backoff (1s, 2s, 4s, max 60s)
+5. After 5 consecutive failures: alert platform, mark node as degraded
+```
+
+## Agent Lifecycle
+
+```
+Start → Run benchmark → Register/update with platform → Start Singbox
+  → Enter heartbeat loop (every 30s)
+  → Re-benchmark (every 6h)
+  → If config update received → restart Singbox with new config
+  → If SIGTERM → graceful shutdown (drain connections, notify platform)
+```
