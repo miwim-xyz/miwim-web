@@ -1,8 +1,10 @@
 # Run a Node
 
-Contributing bandwidth to the Miwim network earns you $MIWIM token rewards. Here's everything you need to know.
+> <span className="coming-soon-badge">Coming Soon</span> The Miwim provider agent is under active development. This page describes the **planned** node operator experience.
 
-## Requirements
+Contributing bandwidth to the Miwim network will earn you $MIWIM token rewards once the network launches.
+
+## Planned Requirements
 
 ### Datacenter Nodes (Backbone)
 | Requirement | Minimum | Recommended |
@@ -12,7 +14,6 @@ Contributing bandwidth to the Miwim network earns you $MIWIM token rewards. Here
 | RAM | 512 MB | 1 GB |
 | Bandwidth | 100 Mbps | 500+ Mbps |
 | Monthly traffic | 500 GB | Unlimited |
-| Staking | 5,000 $MIWIM | — |
 
 ### Residential Nodes (Edge)
 | Requirement | Minimum | Recommended |
@@ -20,67 +21,37 @@ Contributing bandwidth to the Miwim network earns you $MIWIM token rewards. Here
 | Connection | 50 Mbps home broadband | 200+ Mbps |
 | Device | Any always-on Linux device | Raspberry Pi 4+ or mini PC |
 | Network | Outbound port 443 open | No special config needed |
-| Staking | 5,000 $MIWIM | — |
 
-## Quick Start
+> Staking requirement (5,000 $MIWIM per node) will begin at mainnet token launch, targeted for Q1 2027. Beta providers will not need to stake.
 
-### 1. Apply as a Genesis Node
-Visit [miwim.io](/#waitlist) and fill out the provider application form. We'll review your application and send credentials.
+## Planned Reward Structure
 
-### 2. Install the Agent
-```bash
-curl -fsSL https://install.miwim.io | bash
-```
+| Role | Base Rate | Multiplier |
+|------|-----------|------------|
+| Residential exit | $0.10/GB | 2.5x |
+| Relay | $0.10/GB | 1.5x |
+| Datacenter exit | $0.10/GB | 1.0x |
+| Backup (standby) | Flat fee | 0.3x |
 
-### 3. Configure
-Edit `/etc/miwim/config.yaml` with your credentials:
-```yaml
-platform:
-  api_url: https://api.miwim.io
-  node_id: "your-node-id"
-  auth_token: "your-auth-token"
-```
-
-### 4. Start
-```bash
-sudo systemctl start miwim-agent
-sudo systemctl enable miwim-agent  # auto-start on boot
-```
-
-### 5. Verify
-```bash
-sudo systemctl status miwim-agent
-curl http://localhost:9090/metrics
-```
-
-## Rewards
-
-| Role | Base Rate | Multiplier | Example Earnings |
-|------|-----------|------------|-----------------|
-| Residential exit | $0.10/GB | 2.5x | $0.25/GB |
-| Relay | $0.10/GB | 1.5x | $0.15/GB |
-| Datacenter exit | $0.10/GB | 1.0x | $0.10/GB |
-| Backup (standby) | Flat fee | 0.3x | ~$3/month |
-
-Additional bonuses:
+Additional planned bonuses:
 - **Geographic scarcity**: Nodes in underserved regions earn up to 2x bonus
 - **Genesis bonus**: First 100 nodes earn 50% extra rewards for 6 months
 - **Uptime bonus**: 99.9%+ uptime earns 10% extra
 
-## Monitoring Your Node
+## Apply Now
 
-Access your node metrics at `http://your-server:9090/metrics` or view the provider dashboard (coming soon).
+Interested in running a genesis node? [Apply on the waitlist](/#waitlist) and we'll reach out with next steps when the agent is ready for testing.
 
 ## FAQ
 
+**When can I start running a node?**
+The provider agent is under development. Genesis node operators will be the first to receive access during beta (targeted Q3 2026).
+
 **Do I need to stake tokens during beta?**
-No. Staking requirement begins at mainnet token launch (Q1 2027). Beta providers earn future airdrop allocation instead.
+No. Staking begins at mainnet token launch (Q1 2027). Beta providers earn future airdrop allocation instead.
 
 **Can I run multiple nodes?**
-Yes. Each node needs its own credentials and must run on a separate IP address.
-
-**What happens if my node goes offline?**
-Brief outages (< 10 minutes) are tolerated. Extended downtime affects your health score and may reduce rewards. Users are automatically failed over to other nodes.
+Yes. Each node will need its own credentials and must run on a separate IP address.
 
 **Is my home IP exposed to users?**
-No. Residential nodes use reverse tunnels — users connect to a relay, which forwards traffic through the tunnel. Your home IP is never in user configurations.
+No. Residential nodes will use reverse tunnels — users connect to a relay, which forwards traffic through the tunnel. Your home IP is never in user configurations.

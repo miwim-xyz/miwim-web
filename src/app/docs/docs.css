@@ -1,0 +1,177 @@
+/* Override Nextra defaults to match Solarized Light site theme */
+
+:root {
+  --nextra-primary-hue: 175deg;
+  --nextra-primary-saturation: 65%;
+}
+
+/* Force light mode for docs */
+html[class~="dark"] .nextra-content {
+  color-scheme: light;
+}
+
+/* Improve body text readability */
+.nextra-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #586e75;
+}
+
+/* Headings */
+.nextra-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #073642;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.nextra-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #073642;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee8d5;
+}
+
+.nextra-content h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #073642;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+.nextra-content p {
+  margin-bottom: 1rem;
+}
+
+/* Links */
+.nextra-content a {
+  color: #2aa198;
+  text-decoration: none;
+}
+.nextra-content a:hover {
+  text-decoration: underline;
+}
+
+/* Lists */
+.nextra-content ul,
+.nextra-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+.nextra-content li {
+  margin-bottom: 0.35rem;
+}
+
+/* Tables */
+.nextra-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+.nextra-content th {
+  background: #eee8d5;
+  color: #073642;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ddd6c1;
+}
+.nextra-content td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #eee8d5;
+  color: #586e75;
+}
+.nextra-content tr:nth-child(even) td {
+  background: #fdf6e3;
+}
+
+/* Code blocks */
+.nextra-content pre {
+  background: #fdf6e3 !important;
+  border: 1px solid #eee8d5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.nextra-content code {
+  font-family: 'JetBrains Mono', monospace;
+}
+.nextra-content :not(pre) > code {
+  background: #eee8d5;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.875em;
+  color: #cb4b16;
+}
+
+/* Blockquotes */
+.nextra-content blockquote {
+  border-left: 3px solid #2aa198;
+  background: rgba(42, 161, 152, 0.06);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0 6px 6px 0;
+  color: #586e75;
+}
+.nextra-content blockquote p {
+  margin-bottom: 0;
+}
+
+/* Callout / info boxes */
+.nextra-content .nx-callout {
+  border-radius: 8px;
+}
+
+/* Sidebar */
+nav.nextra-sidebar a {
+  color: #586e75;
+}
+nav.nextra-sidebar a:hover,
+nav.nextra-sidebar a[data-active="true"] {
+  color: #2aa198;
+}
+
+/* Breadcrumb */
+.nextra-breadcrumb {
+  color: #93a1a1;
+}
+
+/* TOC right sidebar */
+.nextra-toc a {
+  color: #93a1a1;
+  font-size: 0.8rem;
+}
+.nextra-toc a:hover,
+.nextra-toc a.active {
+  color: #2aa198;
+}
+
+/* HR dividers */
+.nextra-content hr {
+  border-color: #eee8d5;
+  margin: 2rem 0;
+}
+
+/* Coming Soon badge used across pages */
+.coming-soon-badge {
+  display: inline-block;
+  background: #eee8d5;
+  color: #b58900;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
