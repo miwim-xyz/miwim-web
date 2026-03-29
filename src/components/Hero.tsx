@@ -49,13 +49,16 @@ export default function Hero() {
         initial="hidden"
         animate="visible"
         variants={stagger}
-        className="relative z-10 mx-auto max-w-3xl px-6 text-center"
+        className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6"
       >
         {/* Announcement pill */}
         <motion.div
           variants={fadeScale}
           className="mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5"
-          style={{ borderColor: "var(--border-subtle)" }}
+          style={{
+            borderColor: "var(--border-subtle)",
+            background: "rgba(253, 246, 227, 0.6)",
+          }}
         >
           <span
             className="h-2 w-2 rounded-full bg-brand-primary"
@@ -69,17 +72,17 @@ export default function Hero() {
         {/* Main headline */}
         <motion.h1
           variants={fadeUp}
-          className="text-[36px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[48px] lg:text-[64px]"
+          className="text-[30px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[44px] lg:text-[56px]"
         >
-          The <RotatingKeyword /> proxy{" "}
+          The <RotatingKeyword /> proxy network,{" "}
           <br className="hidden lg:block" />
-          network, owned by everyone.
+          owned by everyone.
         </motion.h1>
 
         {/* Subheadline */}
         <motion.p
           variants={fadeUp}
-          className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-text-secondary"
+          className="mx-auto mt-7 max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg"
         >
           DePIN-powered proxy infrastructure with decentralized relay nodes,
           genuine residential IPs, and white-label APIs.
@@ -107,7 +110,7 @@ export default function Hero() {
         {/* Stats row */}
         <motion.div
           variants={fadeUp}
-          className="mt-14 flex flex-wrap items-center justify-center gap-8 lg:gap-10"
+          className="mt-12 flex flex-wrap items-center justify-center gap-8"
         >
           {indicators.map((item) => (
             <div key={item.label} className="flex items-center gap-2">

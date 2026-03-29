@@ -11,6 +11,7 @@ const words = [
   "trustless",
 ];
 
+// Reserve width for the longest word so layout never shifts
 const longestWord = words.reduce((a, b) => (a.length >= b.length ? a : b));
 
 export default function RotatingKeyword() {
@@ -25,21 +26,30 @@ export default function RotatingKeyword() {
 
   return (
     <span
-      className="relative inline-block overflow-hidden align-baseline"
-      style={{ height: "1.2em" }}
+      className="relative inline-block overflow-hidden"
+      style={{ height: "1.15em", verticalAlign: "bottom" }}
     >
-      {/* Invisible longest word reserves the width */}
+      {/* Invisible sizer — keeps container width stable across all words */}
       <span className="invisible select-none" aria-hidden="true">
         {longestWord}
       </span>
+
       <AnimatePresence mode="wait">
         <motion.span
           key={words[index]}
-          initial={{ opacity: 0, y: "30%" }}
-          animate={{ opacity: 1, y: "0%" }}
-          exit={{ opacity: 0, y: "-30%" }}
-          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{
+            y: "0%",
+            opacity: 1,
+            transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+          }}
+          exit={{
+            y: "-100%",
+            opacity: 0,
+            transition: { duration: 0.25, ease: [0.7, 0, 0.84, 0] },
+          }}
           className="absolute inset-x-0 top-0 text-brand-accent"
+          style={{ lineHeight: "inherit" }}
         >
           {words[index]}
         </motion.span>
