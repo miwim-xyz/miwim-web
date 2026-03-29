@@ -69,16 +69,10 @@ export default function Hero() {
         {/* Main headline */}
         <motion.h1
           variants={fadeUp}
-          className="text-[40px] font-bold leading-[1.05] tracking-[-0.03em] lg:text-[64px]"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-brand-primary) 60%, var(--color-brand-secondary) 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
+          className="text-[36px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[48px] lg:text-[64px]"
         >
-          The <RotatingKeyword /> proxy
-          <br />
+          The <RotatingKeyword /> proxy{" "}
+          <br className="hidden lg:block" />
           network, owned by everyone.
         </motion.h1>
 
