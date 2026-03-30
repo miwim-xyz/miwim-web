@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { motion } from "framer-motion";
 import { Coins, Lock, TrendingUp, Vote, Flame } from "lucide-react";
 
@@ -129,12 +129,12 @@ export default function Tokenomics() {
           transition={{ delay: 0.3, duration: 0.5 }}
           className="mt-10 text-center"
         >
-          <Link
+          <NextLink
             href="/docs/whitepaper/tokenomics"
             className="text-sm font-medium text-brand-primary transition-opacity hover:opacity-80"
           >
             {t("readMore")}
-          </Link>
+          </NextLink>
         </motion.div>
       </div>
     </section>

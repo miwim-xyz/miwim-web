@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { motion } from "framer-motion";
 import NetworkCanvas from "./NetworkCanvas";
 import RotatingKeyword from "./RotatingKeyword";
@@ -67,7 +67,7 @@ export default function Hero() {
           variants={fadeUp}
           className="text-[30px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[44px] lg:text-[56px]"
         >
-          {t("headlinePre")} <RotatingKeyword /> {t("headlinePost")}
+          {t("headlinePre")}<RotatingKeyword />{t("headlinePost")}
         </motion.h1>
 
         {/* Subheadline */}
@@ -86,9 +86,9 @@ export default function Hero() {
           <a href="#waitlist" className="btn-primary rounded-xl px-9 py-4 text-base">
             {t("ctaWaitlist")}
           </a>
-          <Link href="/docs/whitepaper" className="btn-ghost rounded-xl px-9 py-4 text-base">
+          <NextLink href="/docs/whitepaper" className="btn-ghost rounded-xl px-9 py-4 text-base">
             {t("ctaWhitepaper")}
-          </Link>
+          </NextLink>
         </motion.div>
 
         {/* Indicators row */}

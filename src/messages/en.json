@@ -10,8 +10,8 @@
   },
   "hero": {
     "announcement": "Seed round open — $100K-$500K",
-    "headlinePre": "The",
-    "headlinePost": "proxy network, owned by everyone.",
+    "headlinePre": "The ",
+    "headlinePost": " proxy network, owned by everyone.",
     "keywords": "unstoppable,decentralized,permissionless,censorship-proof,trustless",
     "subheadline": "DePIN-powered proxy infrastructure with decentralized relay nodes, genuine residential IPs, and white-label APIs.",
     "ctaWaitlist": "Join Waitlist",
@@ -151,6 +151,19 @@
     "providerSuccess": "Application received!",
     "providerSuccessNote": "We'll review and reach out.",
     "selectPlaceholder": "Select..."
+  },
+  "docsPage": {
+    "title": "Miwim Documentation",
+    "subtitle": "Everything you need to understand, integrate, and build on Miwim.",
+    "languageNotice": "Technical documentation is available in English.",
+    "viewFullDocs": "View full docs in English →",
+    "whitepaperTitle": "Whitepaper",
+    "whitepaperDesc": "Introduction, problem statement, solution, architecture, tokenomics, and roadmap.",
+    "technicalTitle": "Technical Docs",
+    "technicalDesc": "Node roles, residential routing, privacy model, smart routing, and token pricing.",
+    "communityTitle": "Community",
+    "communityDesc": "Get involved, apply as a genesis node provider, and find community links.",
+    "readMore": "Read more →"
   },
   "footer": {
     "tagline": "Decentralized proxy infrastructure",

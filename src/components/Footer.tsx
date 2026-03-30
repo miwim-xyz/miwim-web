@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { Github, MessageCircle, Send } from "lucide-react";
 
 export default function Footer() {
@@ -17,8 +18,8 @@ export default function Footer() {
     {
       title: t("resources"),
       links: [
-        { label: t("whitepaper"), href: "/docs/whitepaper", internal: true },
-        { label: t("technicalDocs"), href: "/docs/technical", internal: true },
+        { label: t("whitepaper"), href: "/docs/whitepaper", internal: false },
+        { label: t("technicalDocs"), href: "/docs/technical", internal: false },
         { label: t("blogComing"), href: "#" },
         { label: t("faqComing"), href: "#" },
       ],
@@ -80,6 +81,10 @@ export default function Footer() {
                         <Link href={link.href} className="text-sm text-text-tertiary transition-colors hover:text-text-secondary">
                           {link.label}
                         </Link>
+                      ) : link.href.startsWith("/docs") ? (
+                        <NextLink href={link.href} className="text-sm text-text-tertiary transition-colors hover:text-text-secondary">
+                          {link.label}
+                        </NextLink>
                       ) : (
                         <a href={link.href} className="text-sm text-text-tertiary transition-colors hover:text-text-secondary">
                           {link.label}

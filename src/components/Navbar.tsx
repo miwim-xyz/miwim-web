@@ -44,7 +44,8 @@ export default function Navbar() {
     { label: t("tokenomics"), href: "#tokenomics" },
     { label: t("roadmap"), href: "#roadmap" },
     { label: t("docs"), href: "/docs", internal: true },
-    { label: t("whitepaper"), href: "/docs/whitepaper", internal: true },
+    // whitepaper is English-only docs — use plain href to avoid locale prefix
+    { label: t("whitepaper"), href: "/docs/whitepaper", internal: false },
   ];
 
   function switchLocale(next: Locale) {

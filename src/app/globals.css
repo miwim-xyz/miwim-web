@@ -126,3 +126,121 @@ h1, h2, h3, h4, h5, h6 {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.5); }
 }
+
+/* ============================================================
+   Locale-specific typography
+   ============================================================ */
+
+/* Chinese — rely on system CJK fonts, tune spacing */
+:lang(zh) {
+  font-family:
+    var(--font-sans),
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Microsoft YaHei UI",
+    "Microsoft YaHei",
+    "Noto Sans SC",
+    sans-serif;
+  /* CJK glyphs render slightly larger optically — pull back tracking */
+  letter-spacing: 0.02em;
+  word-break: break-all;
+}
+
+:lang(zh) h1,
+:lang(zh) h2,
+:lang(zh) h3,
+:lang(zh) h4 {
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  /* CJK headings look better with tighter line-height */
+  line-height: 1.4;
+}
+
+/* Vietnamese — Inter covers this well, just ensure line-height */
+:lang(vi) {
+  line-height: 1.75;
+}
+
+/* Arabic */
+:lang(ar) {
+  font-family:
+    var(--font-sans),
+    "Segoe UI",
+    "Noto Sans Arabic",
+    "Dubai",
+    "Arial Unicode MS",
+    sans-serif;
+  line-height: 1.9;
+  letter-spacing: 0;
+}
+
+:lang(ar) h1,
+:lang(ar) h2,
+:lang(ar) h3 {
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+/* Persian / Farsi */
+:lang(fa) {
+  font-family:
+    var(--font-sans),
+    "Segoe UI",
+    "Vazirmatn",
+    "Noto Sans Arabic",
+    "Tahoma",
+    sans-serif;
+  line-height: 1.9;
+  letter-spacing: 0;
+}
+
+:lang(fa) h1,
+:lang(fa) h2,
+:lang(fa) h3 {
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+/* ============================================================
+   RTL layout adjustments
+   ============================================================ */
+
+[dir="rtl"] .flex {
+  /* Flex direction reversal is handled by browser with dir=rtl,
+     but we need to ensure our margin/padding shorthands work. */
+}
+
+/* Flip margin-left/right utilities for RTL nav and components */
+[dir="rtl"] .ml-auto { margin-left: unset; margin-right: auto; }
+[dir="rtl"] .mr-auto { margin-right: unset; margin-left: auto; }
+
+/* Announcement pill and indicators center fine — no change needed */
+
+/* RTL: flip the scroll indicator line to be on the left visually */
+[dir="rtl"] .left-1\/2 {
+  left: unset;
+  right: 50%;
+  transform: translateX(50%);
+}
+
+/* Ensure text alignment is natural for RTL */
+[dir="rtl"] .text-center { text-align: center; }
+
+/* Hero headline in RTL — keyword should flow naturally */
+[dir="rtl"] .tracking-tight { letter-spacing: -0.01em; }
+
+/* Footer columns — already grid, no changes needed */
+
+/* Navbar: flip locale switcher dropdown */
+[dir="rtl"] .locale-dropdown {
+  left: 0;
+  right: unset;
+}
+
+/* Input/select text direction */
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] textarea {
+  text-align: right;
+  direction: rtl;
+}

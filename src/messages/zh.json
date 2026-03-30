@@ -152,6 +152,19 @@
     "providerSuccessNote": "我们会审核后与您联系。",
     "selectPlaceholder": "请选择..."
   },
+  "docsPage": {
+    "title": "Miwim 文档",
+    "subtitle": "了解、集成并在 Miwim 上构建所需的一切。",
+    "languageNotice": "完整技术文档以英语提供。",
+    "viewFullDocs": "查看英文完整文档 →",
+    "whitepaperTitle": "白皮书",
+    "whitepaperDesc": "简介、问题陈述、解决方案、架构、代币经济学和路线图。",
+    "technicalTitle": "技术文档",
+    "technicalDesc": "节点角色、住宅路由、隐私模型、智能路由和代币定价。",
+    "communityTitle": "社区",
+    "communityDesc": "参与其中、申请成为创世节点提供商并查找社区链接。",
+    "readMore": "阅读更多 →"
+  },
   "footer": {
     "tagline": "去中心化代理基础设施",
     "products": "产品",
