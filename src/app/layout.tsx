@@ -3,7 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
-  subsets: ["latin"],
+  subsets: ["latin", "cyrillic", "vietnamese"],
   variable: "--font-sans",
   display: "swap",
 });
@@ -36,7 +36,6 @@ export const metadata: Metadata = {
     url: "https://miwim.io",
     siteName: "Miwim",
     type: "website",
-    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",

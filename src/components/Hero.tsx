@@ -1,50 +1,43 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import NetworkCanvas from "./NetworkCanvas";
 import RotatingKeyword from "./RotatingKeyword";
 
-const indicators = [
-  { color: "#2aa198", label: "DePIN infrastructure" },
-  { color: "#b58900", label: "$MIWIM token" },
-  { color: "#859900", label: "Android app live" },
-  { color: "#268bd2", label: "White-label API" },
-];
-
 const stagger = {
   hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.12, delayChildren: 0.2 },
-  },
+  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } },
 };
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30, filter: "blur(6px)" },
   visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
+    opacity: 1, y: 0, filter: "blur(0px)",
     transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
   },
 };
 
 const fadeScale = {
   hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.5, ease: "easeOut" },
-  },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 export default function Hero() {
+  const t = useTranslations("hero");
+
+  const indicators = [
+    { color: "#2aa198", label: t("indicatorDepin") },
+    { color: "#b58900", label: t("indicatorToken") },
+    { color: "#859900", label: t("indicatorApp") },
+    { color: "#268bd2", label: t("indicatorApi") },
+  ];
+
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      {/* Interactive background */}
       <NetworkCanvas />
 
-      {/* Foreground content */}
       <motion.div
         initial="hidden"
         animate="visible"
@@ -65,18 +58,16 @@ export default function Hero() {
             style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
           />
           <span className="text-[13px] tracking-wide text-text-secondary">
-            Seed round open — $100K-$500K
+            {t("announcement")}
           </span>
         </motion.div>
 
-        {/* Main headline */}
+        {/* Headline */}
         <motion.h1
           variants={fadeUp}
           className="text-[30px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[44px] lg:text-[56px]"
         >
-          The <RotatingKeyword /> proxy network,{" "}
-          <br className="hidden lg:block" />
-          owned by everyone.
+          {t("headlinePre")} <RotatingKeyword /> {t("headlinePost")}
         </motion.h1>
 
         {/* Subheadline */}
@@ -84,8 +75,7 @@ export default function Hero() {
           variants={fadeUp}
           className="mx-auto mt-7 max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg"
         >
-          DePIN-powered proxy infrastructure with decentralized relay nodes,
-          genuine residential IPs, and white-label APIs.
+          {t("subheadline")}
         </motion.p>
 
         {/* Button row */}
@@ -93,31 +83,22 @@ export default function Hero() {
           variants={fadeUp}
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <a
-            href="#waitlist"
-            className="btn-primary rounded-xl px-9 py-4 text-base"
-          >
-            Join Waitlist
+          <a href="#waitlist" className="btn-primary rounded-xl px-9 py-4 text-base">
+            {t("ctaWaitlist")}
           </a>
-          <Link
-            href="/docs/whitepaper"
-            className="btn-ghost rounded-xl px-9 py-4 text-base"
-          >
-            Read Whitepaper →
+          <Link href="/docs/whitepaper" className="btn-ghost rounded-xl px-9 py-4 text-base">
+            {t("ctaWhitepaper")}
           </Link>
         </motion.div>
 
-        {/* Stats row */}
+        {/* Indicators row */}
         <motion.div
           variants={fadeUp}
           className="mt-12 flex flex-wrap items-center justify-center gap-8"
         >
           {indicators.map((item) => (
             <div key={item.label} className="flex items-center gap-2">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: item.color }}
-              />
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: item.color }} />
               <span className="text-[13px] uppercase tracking-[1px] text-text-tertiary">
                 {item.label}
               </span>
