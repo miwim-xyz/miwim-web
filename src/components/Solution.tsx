@@ -15,13 +15,13 @@ const fadeUp = {
 };
 
 const slideLeft = {
-  hidden: { opacity: 0, x: -30 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } },
+  hidden: { opacity: 0, x: -40, filter: "blur(4px)" },
+  visible: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 
 const slideRight = {
-  hidden: { opacity: 0, x: 30 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } },
+  hidden: { opacity: 0, x: 40, filter: "blur(4px)" },
+  visible: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 
 export default function Solution() {
@@ -37,6 +37,7 @@ export default function Solution() {
       description: t("consumerDesc"),
       features: [t("consumerFeat1"), t("consumerFeat2"), t("consumerFeat3"), t("consumerFeat4")],
       variant: slideLeft,
+      hoverClass: "",
     },
     {
       badge: t("businessBadge"),
@@ -47,23 +48,24 @@ export default function Solution() {
       description: t("businessDesc"),
       features: [t("businessFeat1"), t("businessFeat2"), t("businessFeat3"), t("businessFeat4")],
       variant: slideRight,
+      hoverClass: "card-interactive-accent",
     },
   ];
 
   return (
-    <section id="solution" className="px-6 py-20 lg:py-32">
+    <section id="solution" className="px-6 py-24 lg:py-36">
       <div className="mx-auto max-w-[1200px]">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={stagger}
-          className="mb-14 text-center"
+          className="mb-16 text-center"
         >
           <motion.p variants={fadeUp} className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-primary">
             {t("label")}
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl font-bold tracking-tight lg:text-[40px] lg:leading-[1.2]">
+          <motion.h2 variants={fadeUp} className="text-3xl font-bold tracking-tight lg:text-[42px] lg:leading-[1.15]">
             {t("title")}
           </motion.h2>
         </motion.div>
@@ -79,31 +81,33 @@ export default function Solution() {
             <motion.div
               key={product.title}
               variants={product.variant}
-              className="group rounded-2xl border p-8 transition-all duration-300 hover:-translate-y-1 lg:p-10"
-              style={{ background: "var(--color-bg-card)", borderColor: "var(--border-subtle)" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-active)";
-                e.currentTarget.style.boxShadow = "0 4px 24px rgba(42,161,152,0.12)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-subtle)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+              whileHover={{ y: -6 }}
+              className={`card-interactive rounded-2xl p-8 lg:p-10 ${product.hoverClass}`}
             >
-              <span
-                className="mb-4 inline-block rounded-full border px-3 py-1 text-xs font-medium"
-                style={{ borderColor: product.badgeColor, color: product.badgeColor }}
+              <div className="mb-5 flex items-center gap-3">
+                <span
+                  className="inline-block rounded-full border px-3 py-1 text-xs font-semibold"
+                  style={{ borderColor: product.badgeColor, color: product.badgeColor }}
+                >
+                  {product.badge}
+                </span>
+              </div>
+              <div
+                className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
+                style={{ background: `${product.badgeColor}14` }}
               >
-                {product.badge}
-              </span>
-              <product.icon className="mb-4 h-8 w-8" style={{ color: product.badgeColor }} />
-              <h3 className="mb-1 text-2xl font-semibold">{product.title}</h3>
+                <product.icon className="h-6 w-6" style={{ color: product.badgeColor }} />
+              </div>
+              <h3 className="mb-1 text-2xl font-bold">{product.title}</h3>
               <p className="mb-4 text-sm text-text-tertiary">{product.subtitle}</p>
               <p className="mb-6 leading-relaxed text-text-secondary">{product.description}</p>
-              <ul className="space-y-2">
+              <ul className="space-y-2.5">
                 {product.features.map((feat) => (
-                  <li key={feat} className="flex items-start gap-2 text-sm text-text-secondary">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: product.badgeColor }} />
+                  <li key={feat} className="flex items-start gap-2.5 text-sm text-text-secondary">
+                    <span
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: product.badgeColor }}
+                    />
                     {feat}
                   </li>
                 ))}

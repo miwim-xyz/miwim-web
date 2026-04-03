@@ -8,15 +8,17 @@ interface Node {
   vx: number;
   vy: number;
   radius: number;
+  baseRadius: number;
   isSpecial: boolean;
+  pulsePhase: number;
 }
 
-const CONNECT_DIST = 160;
-const MOUSE_RADIUS = 220;
-const MOUSE_FORCE = 0.5;
+const CONNECT_DIST = 180;
+const MOUSE_RADIUS = 280;
+const MOUSE_FORCE = 1.2;
 const PRIMARY = "42, 161, 152"; // #2aa198 RGB
 const ACCENT = "211, 54, 130"; // #d33682 RGB
-const EDGE_COLOR = "147, 161, 161"; // text-tertiary RGB (light theme)
+const EDGE_COLOR = "7, 54, 66"; // darker edge for light theme
 
 export default function NetworkCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -33,7 +35,7 @@ export default function NetworkCanvas() {
     if (!ctx) return;
 
     const isMobile = window.innerWidth < 768;
-    const NODE_COUNT = isMobile ? 40 : 80;
+    const NODE_COUNT = isMobile ? 45 : 90;
 
     function resize() {
       const dpr = window.devicePixelRatio || 1;
@@ -49,13 +51,17 @@ export default function NetworkCanvas() {
     // Initialize nodes
     const nodes: Node[] = [];
     for (let i = 0; i < NODE_COUNT; i++) {
+      const isSpecial = i < 6;
+      const baseRadius = isSpecial ? 5 + Math.random() * 4 : 2 + Math.random() * 3;
       nodes.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
-        radius: i < 5 ? 6 + Math.random() * 3 : 2.5 + Math.random() * 2.5,
-        isSpecial: i < 5,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        radius: baseRadius,
+        baseRadius,
+        isSpecial,
+        pulsePhase: Math.random() * Math.PI * 2,
       });
     }
     nodesRef.current = nodes;
@@ -70,8 +76,8 @@ export default function NetworkCanvas() {
           const dx = node.x - e.clientX;
           const dy = node.y - e.clientY;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 280 && dist > 0) {
-            const force = (1 - dist / 280) * 10;
+          if (dist < 320 && dist > 0) {
+            const force = (1 - dist / 320) * 14;
             node.vx += (dx / dist) * force;
             node.vy += (dy / dist) * force;
           }
@@ -97,11 +103,13 @@ export default function NetworkCanvas() {
 
     const w = () => window.innerWidth;
     const h = () => window.innerHeight;
+    let time = 0;
 
     function animate() {
       animRef.current = requestAnimationFrame(animate);
       if (!visibleRef.current || !ctx) return;
 
+      time += 0.016;
       ctx.clearRect(0, 0, w(), h());
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
@@ -109,8 +117,13 @@ export default function NetworkCanvas() {
       // Update nodes
       for (const node of nodes) {
         // Brownian motion
-        node.vx += (Math.random() - 0.5) * 0.03;
-        node.vy += (Math.random() - 0.5) * 0.03;
+        node.vx += (Math.random() - 0.5) * 0.04;
+        node.vy += (Math.random() - 0.5) * 0.04;
+
+        // Pulse radius for special nodes
+        if (node.isSpecial) {
+          node.radius = node.baseRadius + Math.sin(time * 1.5 + node.pulsePhase) * 1.5;
+        }
 
         // Mouse gravity (desktop)
         if (!isMobile) {
@@ -119,14 +132,14 @@ export default function NetworkCanvas() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < MOUSE_RADIUS && dist > 0) {
             const force = (1 - dist / MOUSE_RADIUS) * MOUSE_FORCE;
-            node.vx += (dx / dist) * force * 0.15;
-            node.vy += (dy / dist) * force * 0.15;
+            node.vx += (dx / dist) * force * 0.3;
+            node.vy += (dy / dist) * force * 0.3;
           }
         }
 
         // Damping
-        node.vx *= 0.97;
-        node.vy *= 0.97;
+        node.vx *= 0.965;
+        node.vy *= 0.965;
 
         // Update position
         node.x += node.vx;
@@ -139,6 +152,18 @@ export default function NetworkCanvas() {
         if (node.y > h() + 20) node.y = -20;
       }
 
+      // Draw mouse glow halo (desktop only)
+      if (!isMobile && mx > 0 && my > 0) {
+        const haloGrad = ctx.createRadialGradient(mx, my, 0, mx, my, 200);
+        haloGrad.addColorStop(0, "rgba(42, 161, 152, 0.06)");
+        haloGrad.addColorStop(0.5, "rgba(42, 161, 152, 0.02)");
+        haloGrad.addColorStop(1, "rgba(42, 161, 152, 0)");
+        ctx.beginPath();
+        ctx.arc(mx, my, 200, 0, Math.PI * 2);
+        ctx.fillStyle = haloGrad;
+        ctx.fill();
+      }
+
       // Draw edges
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
@@ -146,12 +171,22 @@ export default function NetworkCanvas() {
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECT_DIST) {
-            const opacity = (1 - dist / CONNECT_DIST) * 0.18;
+            const opacity = (1 - dist / CONNECT_DIST) * 0.12;
+            // Brighten connections near mouse
+            let mouseBoost = 0;
+            if (!isMobile) {
+              const midX = (nodes[i].x + nodes[j].x) / 2;
+              const midY = (nodes[i].y + nodes[j].y) / 2;
+              const dMouse = Math.sqrt((midX - mx) ** 2 + (midY - my) ** 2);
+              if (dMouse < MOUSE_RADIUS) {
+                mouseBoost = (1 - dMouse / MOUSE_RADIUS) * 0.25;
+              }
+            }
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(${EDGE_COLOR}, ${opacity})`;
-            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = `rgba(${EDGE_COLOR}, ${opacity + mouseBoost})`;
+            ctx.lineWidth = 1 + mouseBoost * 2;
             ctx.stroke();
           }
         }
@@ -160,17 +195,28 @@ export default function NetworkCanvas() {
       // Draw nodes with glow
       for (const node of nodes) {
         const color = node.isSpecial ? ACCENT : PRIMARY;
-        const alpha = node.isSpecial ? 0.65 : 0.45;
+        const alpha = node.isSpecial ? 0.85 : 0.65;
 
-        // Glow
-        if (node.radius > 4) {
+        // Proximity boost near mouse
+        let proximityScale = 1;
+        if (!isMobile) {
+          const dMouse = Math.sqrt((node.x - mx) ** 2 + (node.y - my) ** 2);
+          if (dMouse < MOUSE_RADIUS) {
+            proximityScale = 1 + (1 - dMouse / MOUSE_RADIUS) * 0.4;
+          }
+        }
+
+        const drawRadius = node.radius * proximityScale;
+
+        // Glow for larger nodes
+        if (drawRadius > 3.5) {
           ctx.beginPath();
-          ctx.arc(node.x, node.y, node.radius * 3, 0, Math.PI * 2);
+          ctx.arc(node.x, node.y, drawRadius * 3.5, 0, Math.PI * 2);
           const grad = ctx.createRadialGradient(
             node.x, node.y, 0,
-            node.x, node.y, node.radius * 3
+            node.x, node.y, drawRadius * 3.5
           );
-          grad.addColorStop(0, `rgba(${color}, 0.15)`);
+          grad.addColorStop(0, `rgba(${color}, 0.2)`);
           grad.addColorStop(1, `rgba(${color}, 0)`);
           ctx.fillStyle = grad;
           ctx.fill();
@@ -178,7 +224,7 @@ export default function NetworkCanvas() {
 
         // Core
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.arc(node.x, node.y, drawRadius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${color}, ${alpha})`;
         ctx.fill();
       }

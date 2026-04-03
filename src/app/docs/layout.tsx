@@ -3,6 +3,7 @@ import { getPageMap } from "nextra/page-map";
 import "nextra-theme-docs/style.css";
 import "./docs.css";
 import { fontVariables } from "@/lib/fonts";
+import ReadingProgress from "@/components/ReadingProgress";
 
 export default async function DocsLayout({
   children,
@@ -12,6 +13,7 @@ export default async function DocsLayout({
   return (
     <html lang="en" className={fontVariables}>
       <body>
+        <ReadingProgress />
         <Layout
           pageMap={await getPageMap()}
           docsRepositoryBase="https://github.com/miwim-xyz/miwim-web/tree/master"

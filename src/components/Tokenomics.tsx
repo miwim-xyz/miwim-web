@@ -7,7 +7,7 @@ import { Coins, Lock, TrendingUp, Vote, Flame } from "lucide-react";
 
 const stagger = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
 const fadeUp = {
@@ -16,7 +16,7 @@ const fadeUp = {
 };
 
 const slideRight = {
-  hidden: { opacity: 0, x: -20 },
+  hidden: { opacity: 0, x: -24 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 
@@ -40,19 +40,19 @@ export default function Tokenomics() {
   ];
 
   return (
-    <section id="tokenomics" className="px-6 py-20 lg:py-32">
+    <section id="tokenomics" className="section-alt px-6 py-24 lg:py-36">
       <div className="mx-auto max-w-[1200px]">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={stagger}
-          className="mb-14 text-center"
+          className="mb-16 text-center"
         >
           <motion.p variants={fadeUp} className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-gold">
             {t("label")}
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl font-bold tracking-tight lg:text-[40px] lg:leading-[1.2]">
+          <motion.h2 variants={fadeUp} className="text-3xl font-bold tracking-tight lg:text-[42px] lg:leading-[1.15]">
             {t("title")}
           </motion.h2>
         </motion.div>
@@ -65,27 +65,27 @@ export default function Tokenomics() {
             viewport={{ once: true, amount: 0.2 }}
             variants={stagger}
           >
-            <motion.p variants={fadeUp} className="mb-6 text-sm text-text-tertiary">
+            <motion.p variants={fadeUp} className="mb-8 text-sm text-text-tertiary">
               {t("totalSupply")}{" "}
-              <span className="font-semibold text-brand-gold">{t("totalSupplyValue")}</span>
+              <span className="font-bold text-brand-gold">{t("totalSupplyValue")}</span>
             </motion.p>
-            <div className="space-y-4">
+            <div className="space-y-5">
               {allocations.map((alloc, i) => (
                 <motion.div key={alloc.labelKey} variants={slideRight}>
-                  <div className="mb-1.5 flex items-baseline justify-between">
-                    <span className="text-sm font-medium text-text-primary">
+                  <div className="mb-2 flex items-baseline justify-between">
+                    <span className="text-sm font-semibold text-text-primary">
                       {alloc.pct}% {t(alloc.labelKey as any)}
                     </span>
                     <span className="text-xs text-text-tertiary">{t(alloc.noteKey as any)}</span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full" style={{ background: "var(--color-bg-card-deep)" }}>
+                  <div className="h-4 overflow-hidden rounded-full" style={{ background: "var(--color-bg-primary)" }}>
                     <motion.div
                       className="h-full rounded-full"
                       style={{ backgroundColor: alloc.color }}
                       initial={{ width: 0 }}
                       whileInView={{ width: `${alloc.pct}%` }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.7, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      transition={{ duration: 0.9, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
                     />
                   </div>
                 </motion.div>
@@ -105,16 +105,17 @@ export default function Tokenomics() {
               <motion.div
                 key={util.labelKey}
                 variants={fadeUp}
-                className="flex items-center gap-4 rounded-xl border p-4 transition-all duration-300 hover:-translate-y-0.5"
-                style={{ background: "var(--color-bg-card)", borderColor: "var(--border-subtle)" }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--border-active)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border-subtle)"; }}
+                whileHover={{ x: 4 }}
+                className="card-interactive card-interactive-gold flex items-center gap-4 rounded-xl p-5"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" style={{ background: "var(--color-bg-card-deep)" }}>
+                <div
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                  style={{ background: "rgba(181, 137, 0, 0.1)" }}
+                >
                   <util.icon className="h-5 w-5 text-brand-gold" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-text-primary">{t(util.labelKey as any)}</p>
+                  <p className="text-sm font-bold text-text-primary">{t(util.labelKey as any)}</p>
                   <p className="text-sm text-text-tertiary">{t(util.descKey as any)}</p>
                 </div>
               </motion.div>
@@ -131,9 +132,9 @@ export default function Tokenomics() {
         >
           <NextLink
             href="/docs/whitepaper/tokenomics"
-            className="text-sm font-medium text-brand-primary transition-opacity hover:opacity-80"
+            className="text-sm font-semibold text-brand-primary transition-opacity hover:opacity-80"
           >
-            {t("readMore")}
+            {t("readMore")} →
           </NextLink>
         </motion.div>
       </div>

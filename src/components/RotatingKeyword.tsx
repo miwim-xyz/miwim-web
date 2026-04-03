@@ -14,7 +14,7 @@ export default function RotatingKeyword() {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % words.length);
-    }, 2800);
+    }, 3200);
     return () => clearInterval(timer);
   }, [words.length]);
 
@@ -29,14 +29,14 @@ export default function RotatingKeyword() {
       <AnimatePresence mode="wait">
         <motion.span
           key={words[index]}
-          initial={{ y: "100%", opacity: 0 }}
+          initial={{ y: "110%", opacity: 0, filter: "blur(8px)" }}
           animate={{
-            y: "0%", opacity: 1,
-            transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+            y: "0%", opacity: 1, filter: "blur(0px)",
+            transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
           }}
           exit={{
-            y: "-100%", opacity: 0,
-            transition: { duration: 0.25, ease: [0.7, 0, 0.84, 0] },
+            y: "-110%", opacity: 0, filter: "blur(4px)",
+            transition: { duration: 0.3, ease: [0.7, 0, 0.84, 0] },
           }}
           className="absolute inset-x-0 top-0 text-brand-accent"
           style={{ lineHeight: "inherit" }}

@@ -8,20 +8,20 @@ import RotatingKeyword from "./RotatingKeyword";
 
 const stagger = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } },
+  visible: { transition: { staggerChildren: 0.14, delayChildren: 0.3 } },
 };
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30, filter: "blur(6px)" },
+  hidden: { opacity: 0, y: 40, filter: "blur(8px)" },
   visible: {
     opacity: 1, y: 0, filter: "blur(0px)",
-    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] },
   },
 };
 
 const fadeScale = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 export default function Hero() {
@@ -47,17 +47,18 @@ export default function Hero() {
         {/* Announcement pill */}
         <motion.div
           variants={fadeScale}
-          className="mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5"
+          className="mb-6 inline-flex items-center gap-2 rounded-full border px-5 py-2"
           style={{
             borderColor: "var(--border-subtle)",
-            background: "rgba(253, 246, 227, 0.6)",
+            background: "rgba(253, 246, 227, 0.7)",
+            backdropFilter: "blur(8px)",
           }}
         >
           <span
             className="h-2 w-2 rounded-full bg-brand-primary"
             style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
           />
-          <span className="text-[13px] tracking-wide text-text-secondary">
+          <span className="text-[13px] font-medium tracking-wide text-text-secondary">
             {t("announcement")}
           </span>
         </motion.div>
@@ -65,7 +66,7 @@ export default function Hero() {
         {/* Headline */}
         <motion.h1
           variants={fadeUp}
-          className="text-[30px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[44px] lg:text-[56px]"
+          className="text-[32px] font-extrabold leading-[1.1] tracking-tight text-text-primary sm:text-[48px] lg:text-[64px]"
         >
           {t("headlinePre")}<RotatingKeyword />{t("headlinePost")}
         </motion.h1>
@@ -73,7 +74,7 @@ export default function Hero() {
         {/* Subheadline */}
         <motion.p
           variants={fadeUp}
-          className="mx-auto mt-7 max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg"
+          className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-text-secondary sm:text-lg lg:text-xl"
         >
           {t("subheadline")}
         </motion.p>
@@ -81,25 +82,35 @@ export default function Hero() {
         {/* Button row */}
         <motion.div
           variants={fadeUp}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4"
+          className="mt-8 flex flex-wrap items-center justify-center gap-4"
         >
-          <a href="#waitlist" className="btn-primary rounded-xl px-9 py-4 text-base">
+          <motion.a
+            href="#waitlist"
+            className="btn-primary rounded-xl px-10 py-4 text-base"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
+          >
             {t("ctaWaitlist")}
-          </a>
-          <NextLink href="/docs/whitepaper" className="btn-ghost rounded-xl px-9 py-4 text-base">
-            {t("ctaWhitepaper")}
-          </NextLink>
+          </motion.a>
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+            <NextLink href="/docs/whitepaper" className="btn-ghost rounded-xl px-10 py-4 text-base">
+              {t("ctaWhitepaper")}
+            </NextLink>
+          </motion.div>
         </motion.div>
 
         {/* Indicators row */}
         <motion.div
           variants={fadeUp}
-          className="mt-12 flex flex-wrap items-center justify-center gap-8"
+          className="mt-10 flex flex-wrap items-center justify-center gap-6 sm:gap-10"
         >
           {indicators.map((item) => (
-            <div key={item.label} className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: item.color }} />
-              <span className="text-[13px] uppercase tracking-[1px] text-text-tertiary">
+            <div key={item.label} className="flex items-center gap-2.5">
+              <span
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}40` }}
+              />
+              <span className="text-xs font-semibold uppercase tracking-[1.5px] text-text-tertiary sm:text-[13px]">
                 {item.label}
               </span>
             </div>
@@ -111,12 +122,12 @@ export default function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
+        transition={{ delay: 1.8, duration: 0.8 }}
         className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
       >
-        <div className="relative h-10 w-px bg-text-tertiary/30">
+        <div className="relative h-12 w-px bg-text-tertiary/20">
           <span
-            className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-text-tertiary/60"
+            className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-brand-primary/60"
             style={{ animation: "scroll-line 2s ease-in-out infinite" }}
           />
         </div>
